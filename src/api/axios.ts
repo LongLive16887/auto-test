@@ -5,17 +5,32 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+// Функция для удаления токена из cookie
+const removeToken = () => {
+  document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+};
 
+// Добавляем токен в запросы
 api.interceptors.request.use(config => {
   const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
   
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   } else {
-    delete config.headers.Authorization; 
+    delete config.headers.Authorization;
   }
 
   return config;
 }, error => Promise.reject(error));
+
+// Обрабатываем 401 ошибку
+api.interceptors.response.use(response => response, error => {
+  if (error.response?.status === 401) {
+    removeToken(); // Удаляем токен
+    window.location.href = "/login"; // Перенаправляем на страницу логина
+  }
+
+  return Promise.reject(error);
+});
 
 export default api;
