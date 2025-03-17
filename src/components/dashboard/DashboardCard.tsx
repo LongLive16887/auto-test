@@ -93,13 +93,13 @@ const DashboardCard: React.FC<{ cardData: CardData }> = ({ cardData }) => {
 							Описание
 						</AccordionTrigger>
 						<AccordionContent className='flex flex-col gap-4'>
-							{cardData.questionDescriptionRu && (
+							{cardData.questionDescriptionLa && (
 								<div>
-									<p className='text-xs font-semibold mb-2'>Ru</p>
+									<p className='text-xs font-semibold mb-2'>La</p>
 									<div
 										className='text-xs'
 										dangerouslySetInnerHTML={{
-											__html: cardData.questionDescriptionRu,
+											__html: cardData.questionDescriptionLa,
 										}}
 									/>
 								</div>
@@ -115,13 +115,13 @@ const DashboardCard: React.FC<{ cardData: CardData }> = ({ cardData }) => {
 									/>
 								</div>
 							)}
-							{cardData.questionDescriptionLa && (
+							{cardData.questionDescriptionRu && (
 								<div>
-									<p className='text-xs font-semibold mb-2'>La</p>
+									<p className='text-xs font-semibold mb-2'>Ru</p>
 									<div
 										className='text-xs'
 										dangerouslySetInnerHTML={{
-											__html: cardData.questionDescriptionLa,
+											__html: cardData.questionDescriptionRu,
 										}}
 									/>
 								</div>
@@ -134,7 +134,9 @@ const DashboardCard: React.FC<{ cardData: CardData }> = ({ cardData }) => {
 				<div className='flex items-center w-full justify-between'>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button className='w-full' variant='outline'>Показать ответы</Button>
+							<Button className='w-full' variant='outline'>
+								Показать ответы
+							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align='center'>
 							{cardData.answers.length > 0 ? (
