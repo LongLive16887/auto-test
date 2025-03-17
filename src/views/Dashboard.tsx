@@ -62,7 +62,7 @@ function Dashboard() {
 				endMessage={
 					<p className='text-center text-gray-500'>Больше вопросов нет</p>
 				}
-				className='flex flex-wrap gap-4'
+				className='flex flex-wrap gap-3.5'
 			>
 				{data.map(item => (
 					<DashboardCard key={item.id} cardData={item} />

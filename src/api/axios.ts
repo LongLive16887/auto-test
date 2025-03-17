@@ -23,11 +23,10 @@ api.interceptors.request.use(config => {
   return config;
 }, error => Promise.reject(error));
 
-// Обрабатываем 401 ошибку
 api.interceptors.response.use(response => response, error => {
   if (error.response?.status === 401) {
-    removeToken(); // Удаляем токен
-    window.location.href = "/login"; // Перенаправляем на страницу логина
+    removeToken(); 
+    window.location.href = "/login"; 
   }
 
   return Promise.reject(error);

@@ -14,6 +14,7 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
+import { Check, X } from 'lucide-react'
 import { useState } from 'react'
 
 interface Answer {
@@ -46,6 +47,17 @@ const DashboardCard: React.FC<{ cardData: CardData }> = ({ cardData }) => {
 				<div className='flex items-center justify-between w-full mb-2 text-xs'>
 					<p>{`id: ${cardData.id}`}</p>
 					<p> {`Bilet: ${cardData.groupId}`}</p>
+					<p>
+						{[
+							cardData.questionDescriptionLa,
+							cardData.questionDescriptionUz,
+							cardData.questionDescriptionRu,
+						].some(desc => !desc?.trim()) ? (
+							<X className='text-red-500' />
+						) : (
+							<Check className='text-green-500' />
+						)}
+					</p>
 				</div>
 				{cardData.questionLa && (
 					<div>
@@ -62,7 +74,7 @@ const DashboardCard: React.FC<{ cardData: CardData }> = ({ cardData }) => {
 				{cardData.questionRu && (
 					<div>
 						<p className='text-xs font-semibold mb-1'>Ru</p>
-						<div dangerouslySetInnerHTML={{ __html: cardData.questionUz }} />
+						<div dangerouslySetInnerHTML={{ __html: cardData.questionRu }} />
 					</div>
 				)}
 			</CardHeader>
@@ -87,6 +99,7 @@ const DashboardCard: React.FC<{ cardData: CardData }> = ({ cardData }) => {
 					</Dialog>
 				)}
 
+				{/* Описание */}
 				<Accordion type='single' collapsible>
 					<AccordionItem value='description'>
 						<AccordionTrigger className='text-left text-gray-700'>
@@ -132,13 +145,13 @@ const DashboardCard: React.FC<{ cardData: CardData }> = ({ cardData }) => {
 
 				{/* Ответы в Dropdown Menu */}
 				<div className='flex items-center w-full justify-between'>
-					<DropdownMenu>
+					<DropdownMenu modal={false}>
 						<DropdownMenuTrigger asChild>
 							<Button className='w-full' variant='outline'>
 								Показать ответы
 							</Button>
 						</DropdownMenuTrigger>
-						<DropdownMenuContent align='center'>
+						<DropdownMenuContent>
 							{cardData.answers.length > 0 ? (
 								cardData.answers.map(answer => (
 									<DropdownMenuItem key={answer.id}>
@@ -167,6 +180,7 @@ const DashboardCard: React.FC<{ cardData: CardData }> = ({ cardData }) => {
 							)}
 						</DropdownMenuContent>
 					</DropdownMenu>
+
 					{/* <Button>
 						<Pencil />
 					</Button> */}
