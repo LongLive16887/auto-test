@@ -17,12 +17,18 @@ import {
 	SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import { useUserStore } from '@/store/user'
-import { Bell, ChevronUp, MessageCircleQuestion, Monitor, User2 } from 'lucide-react'
+import {
+	ChevronUp,
+	Lightbulb,
+	MessageCircleQuestion,
+	Monitor,
+	User2,
+} from 'lucide-react'
 
 const items = [
 	{ title: 'Savollar', url: '/', icon: MessageCircleQuestion },
 	{ title: 'Saytdagi Reklamalar', url: '/adverstings', icon: Monitor },
-	{ title: 'Bildirishnomalar', url: '/notifications', icon: Bell },
+	{ title: 'Mavzular', url: '/themes', icon: Lightbulb },
 ]
 
 const AppSidebar = () => {
@@ -36,7 +42,10 @@ const AppSidebar = () => {
 						<SidebarMenuButton>
 							<a href='/' className='flex items-center gap-2'>
 								<img src={Logo} alt='' className='w-fit max-h-5' />
-								<span className='font-bold whitespace-nowrap'> AutoTest ADMIN</span>
+								<span className='font-bold whitespace-nowrap'>
+									{' '}
+									AutoTest ADMIN
+								</span>
 							</a>
 						</SidebarMenuButton>
 					</SidebarMenuItem>

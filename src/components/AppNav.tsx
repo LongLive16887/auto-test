@@ -1,23 +1,53 @@
-import { useLocation } from 'react-router-dom'
-// import { Button } from './ui/button'
+import api from '@/api/axios'
+import { useUserStore } from '@/store/user'
+import { useEffect, useState } from 'react'
+import CreateCard from './dashboard/CreateCard'
+import CreateTheme from './themes/CreateTheme'
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from './ui/select'
 import { SidebarTrigger } from './ui/sidebar'
-// import { CirclePlus } from 'lucide-react'
 
 const titles: Record<string, string> = {
 	'/': 'Savollar',
 	'/adverstings': 'Saytdagi Reklamalar',
-	'/notifications': 'Bildirishnomalar',
+	'/themes': 'Mavzular',
 	'/adverstings/add': 'Sayt yaratish',
 }
 
+interface CardData {
+	id: string
+	type_id: number
+	name_ru: string
+	name_la: string
+	name_uz: string
+	image: string
+}
+
 const AppNav = () => {
-	const location = useLocation()
+	const { userRoles } = useUserStore()
 	let title = titles[location.pathname]
 
 	if (location.pathname.startsWith('/adverstings/add/new-unit/')) {
 		title = 'Blok yaratish'
 	} else if (location.pathname.startsWith('/adverstings/')) {
 		title = "Sayt haqida ma'lumot"
+	}
+	const [select, setSelect] = useState<CardData[]>([])
+
+	useEffect(() => {
+		api.get('/api/groups?type_id=100').then(res => {
+			setSelect(res.data.data)
+		})
+	}, [])
+
+	const handleFilter = () => {
+		
 	}
 
 	return (
@@ -26,13 +56,30 @@ const AppNav = () => {
 				<SidebarTrigger />
 				<p className='font-semibold text-xl text-center'>{title}</p>
 			</div>
-			{/* {location.pathname === '/' ? (
-				<Link to='/'>
-					<Button>
-							<CirclePlus />
-						</Button>
-				</Link>
-			) : null} */}
+			<div className='flex items-center gap-3'>
+				<div>
+					<Select>
+						<SelectTrigger className='w-fit max-w-[800px]'>
+							<SelectValue placeholder='Mavzuni tanlang' />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								{select.map(item => (
+									<SelectItem key={item.id} value={item.id}>
+										{item.name_la}
+									</SelectItem>
+								))}
+							</SelectGroup>
+						</SelectContent>
+					</Select>
+				</div>
+				{userRoles.includes('WRITE') && location.pathname === '/' ? (
+					<CreateCard />
+				) : null}
+				{userRoles.includes('WRITE') && location.pathname === '/themes' ? (
+					<CreateTheme />
+				) : null}
+			</div>
 		</div>
 	)
 }

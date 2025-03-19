@@ -1,18 +1,16 @@
 import axios from "axios";
+import { useUserStore } from '@/store/user';
 
 const api = axios.create({
   baseURL: "https://api.skillsoft.uz/",
   headers: { "Content-Type": "application/json" },
 });
+// http://10.20.11.1:8080
+// https://api.skillsoft.uz/
 
-// Функция для удаления токена из cookie
-const removeToken = () => {
-  document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-};
 
-// Добавляем токен в запросы
 api.interceptors.request.use(config => {
-  const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+  const token = useUserStore.getState().token
   
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -23,13 +21,19 @@ api.interceptors.request.use(config => {
   return config;
 }, error => Promise.reject(error));
 
-api.interceptors.response.use(response => response, error => {
-  if (error.response?.status === 401) {
-    removeToken(); 
-    window.location.href = "/login"; 
-  }
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      setTimeout(() => {
+        const logoutUser = useUserStore.getState().lougoutUser; 
+        logoutUser(); 
+        window.location.href = "/login"; 
+      }, 0);
+    }
 
-  return Promise.reject(error);
-});
+    return Promise.reject(error);
+  }
+);
 
 export default api;

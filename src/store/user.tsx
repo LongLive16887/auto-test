@@ -1,16 +1,21 @@
-import axios from '@/api/axios'
+import api from '@/api/axios'
 import Cookies from 'js-cookie'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+
 
 type UserStore = {
 	user: {
 		username?: string
 	}
+	userRoles: string[]
 	token: string
 	setUser: (val: any) => void
 	lougoutUser: () => void
-	authUser: (loginData: { username: string; password: string }) => Promise<void>
+	authUser: (loginData: {
+		username: string
+		password: string
+	}) => Promise<void>
 }
 
 export const useUserStore = create<UserStore>()(
@@ -18,6 +23,7 @@ export const useUserStore = create<UserStore>()(
 		set => ({
 			token: Cookies.get('token') || '',
 			user: {},
+			userRoles: [],
 			setToken: (val: string) => {
 				Cookies.set('token', val, { expires: 1, path: '/' })
 				set({ token: val })
@@ -27,14 +33,13 @@ export const useUserStore = create<UserStore>()(
 			},
 			authUser: async loginData => {
 				try {
-					const res = await axios.post('/api/v1/auth/login', loginData)
-					console.log(res)
+					const res = await api.post('/api/v1/auth/login', loginData)
 					const token = res.data.data.access_token
-
 					Cookies.set('token', token, { expires: 1, path: '/' })
-					set({ token, user: loginData })
+					set({ token, user: res.data.data.user })
+					set({userRoles: res.data.data.roles})
 				} catch (error) {
-					console.error('Ошибка авторизации:', error)
+					console.error(error)
 				}
 			},
 			lougoutUser: () => {
@@ -46,6 +51,7 @@ export const useUserStore = create<UserStore>()(
 			name: 'Administrator',
 			partialize: state => ({
 				user: state.user,
+				userRoles: state.userRoles
 			}),
 		}
 	)

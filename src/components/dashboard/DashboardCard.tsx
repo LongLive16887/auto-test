@@ -14,67 +14,79 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
-import { Check, X } from 'lucide-react'
+import { useEditCardStore } from '@/store/editCard'
+import { useUserStore } from '@/store/user'
+import { DialogTitle } from '@radix-ui/react-dialog'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { Check, Pencil, X } from 'lucide-react'
 import { useState } from 'react'
+import EditCardForm from '../forms/EditCardForm'
 
 interface Answer {
 	id: number
-	answerRu: string
-	answerUz: string
-	answerLa: string
-	isCorrect: boolean
+	answer_la: string
+	answer_uz: string
+	answer_ru: string
+	answer_kaa: string
+	is_correct: boolean
 }
 
 interface CardData {
 	id: number
-	groupId: number
+	question_la: string
+	question_ru: string
+	question_uz: string
+	question_kaa: string
+	question_description_la: string
+	question_description_ru: string
+	question_description_uz: string
+	description_kaa: string
+	is_reverse: boolean
+	group_id: number
+	order_number: number
+	lesson_id: string
+	has_video: boolean
 	answers: Answer[]
 	media: string
-	questionRu: string
-	questionUz: string
-	questionLa: string
-	questionDescriptionRu: string
-	questionDescriptionUz: string
-	questionDescriptionLa: string
 }
 
-const DashboardCard: React.FC<{ cardData: CardData }> = ({ cardData }) => {
+const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 	const [isImageOpen, setIsImageOpen] = useState(false)
-
+	const { userRoles } = useUserStore()
 	return (
 		<Card className='w-full max-w-sm  flex flex-col justify-between  shadow-lg rounded-2xl p-4'>
 			<CardHeader className='text-sm font-bold text-center'>
 				<div className='flex items-center justify-between w-full mb-2 text-xs'>
 					<p>{`id: ${cardData.id}`}</p>
-					<p> {`Bilet: ${cardData.groupId}`}</p>
+					<p> {`Bilet: ${cardData.group_id}`}</p>
 					<p>
 						{[
-							cardData.questionDescriptionLa,
-							cardData.questionDescriptionUz,
-							cardData.questionDescriptionRu,
-						].some(desc => !desc?.trim()) ? (
+							cardData.question_description_la,
+							cardData.question_description_uz,
+							cardData.question_description_ru,
+						].some(desc => !desc?.trim()) || !cardData.lesson_id ? (
 							<X className='text-red-500' />
 						) : (
 							<Check className='text-green-500' />
 						)}
 					</p>
 				</div>
-				{cardData.questionLa && (
+				{cardData.question_la && (
 					<div>
 						<p className='text-xs font-semibold mb-1'>La</p>
-						<div dangerouslySetInnerHTML={{ __html: cardData.questionLa }} />
+						<div dangerouslySetInnerHTML={{ __html: cardData.question_la }} />
 					</div>
 				)}
-				{cardData.questionUz && (
+				{cardData.question_uz && (
 					<div>
 						<p className='text-xs font-semibold mb-1'>Uz</p>
-						<div dangerouslySetInnerHTML={{ __html: cardData.questionUz }} />
+						<div dangerouslySetInnerHTML={{ __html: cardData.question_uz }} />
 					</div>
 				)}
-				{cardData.questionRu && (
+				{cardData.question_ru && (
 					<div>
 						<p className='text-xs font-semibold mb-1'>Ru</p>
-						<div dangerouslySetInnerHTML={{ __html: cardData.questionRu }} />
+						<div dangerouslySetInnerHTML={{ __html: cardData.question_ru }} />
 					</div>
 				)}
 			</CardHeader>
@@ -85,7 +97,7 @@ const DashboardCard: React.FC<{ cardData: CardData }> = ({ cardData }) => {
 						<DialogTrigger asChild>
 							<img
 								src={cardData.media}
-								alt={cardData.questionRu || 'Изображение'}
+								alt={cardData.question_ru || 'Изображение'}
 								className='rounded-lg cursor-pointer w-full h-48 object-cover'
 							/>
 						</DialogTrigger>
@@ -106,35 +118,35 @@ const DashboardCard: React.FC<{ cardData: CardData }> = ({ cardData }) => {
 							Описание
 						</AccordionTrigger>
 						<AccordionContent className='flex flex-col gap-4'>
-							{cardData.questionDescriptionLa && (
+							{cardData.question_description_la && (
 								<div>
 									<p className='text-xs font-semibold mb-2'>La</p>
 									<div
 										className='text-xs'
 										dangerouslySetInnerHTML={{
-											__html: cardData.questionDescriptionLa,
+											__html: cardData.question_description_la,
 										}}
 									/>
 								</div>
 							)}
-							{cardData.questionDescriptionUz && (
+							{cardData.question_description_uz && (
 								<div>
 									<p className='text-xs font-semibold mb-2'>Uz</p>
 									<div
 										className='text-xs'
 										dangerouslySetInnerHTML={{
-											__html: cardData.questionDescriptionUz,
+											__html: cardData.question_description_uz,
 										}}
 									/>
 								</div>
 							)}
-							{cardData.questionDescriptionRu && (
+							{cardData.question_description_ru && (
 								<div>
 									<p className='text-xs font-semibold mb-2'>Ru</p>
 									<div
 										className='text-xs'
 										dangerouslySetInnerHTML={{
-											__html: cardData.questionDescriptionRu,
+											__html: cardData.question_description_ru,
 										}}
 									/>
 								</div>
@@ -147,28 +159,28 @@ const DashboardCard: React.FC<{ cardData: CardData }> = ({ cardData }) => {
 				<div className='flex items-center w-full justify-between'>
 					<DropdownMenu modal={false}>
 						<DropdownMenuTrigger asChild>
-							<Button className='w-full' variant='outline'>
+							<Button className='' variant='outline'>
 								Показать ответы
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent>
-							{cardData.answers.length > 0 ? (
+							{cardData.answers?.length > 0 ? (
 								cardData.answers.map(answer => (
 									<DropdownMenuItem key={answer.id}>
 										<div
 											className={cn(
 												'flex flex-col',
-												answer.isCorrect && 'text-green-500'
+												answer.is_correct && 'text-green-500'
 											)}
 										>
 											<span
-												dangerouslySetInnerHTML={{ __html: answer.answerLa }}
+												dangerouslySetInnerHTML={{ __html: answer.answer_la }}
 											/>
 											<span
-												dangerouslySetInnerHTML={{ __html: answer.answerUz }}
+												dangerouslySetInnerHTML={{ __html: answer.answer_uz }}
 											/>
 											<span
-												dangerouslySetInnerHTML={{ __html: answer.answerRu }}
+												dangerouslySetInnerHTML={{ __html: answer.answer_ru }}
 											/>
 										</div>
 									</DropdownMenuItem>
@@ -181,9 +193,31 @@ const DashboardCard: React.FC<{ cardData: CardData }> = ({ cardData }) => {
 						</DropdownMenuContent>
 					</DropdownMenu>
 
-					{/* <Button>
-						<Pencil />
-					</Button> */}
+					{userRoles.includes('UPDATE') ? (
+						<Dialog
+						onOpenChange={async (open) => {
+							const { setId, fetchCardById, reset } = useEditCardStore.getState();
+							if (open) {
+								setId(cardData.id);
+								await fetchCardById(cardData.id);
+							} else {
+								reset(); 
+							}
+						}}
+						>
+							<DialogTrigger asChild>
+								<Button>
+									<Pencil />
+								</Button>
+							</DialogTrigger>
+							<DialogContent className='sm:max-w-[1400px]'>
+								<VisuallyHidden>
+									<DialogTitle>Скрытый заголовок</DialogTitle>
+								</VisuallyHidden>
+								<EditCardForm />
+							</DialogContent>
+						</Dialog>
+					) : null}
 				</div>
 			</CardContent>
 		</Card>
