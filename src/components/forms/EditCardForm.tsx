@@ -58,7 +58,7 @@ interface CardData {
 }
 
 export default function EditCardForm() {
-	const { currentCard, setOpen } = useEditCardStore()
+	const { currentCard } = useEditCardStore()
 	useEffect(() => {
 		api.get('/api/groups?type_id=100').then(res => {
 			setSelect(res.data.data)
@@ -70,7 +70,7 @@ export default function EditCardForm() {
 	const { handleSubmit, control, setValue } = form
 	const [isFormInitialized, setIsFormInitialized] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
-	const [apiError, setApiError] = useState('')
+	const [apiError] = useState('')
 	const [select, setSelect] = useState<CardData[]>([])
 
 	useEffect(() => {
@@ -328,7 +328,7 @@ export default function EditCardForm() {
 						<Button
 							type='button'
 							onClick={() =>
-								append({ answer_la: '', answer_uz: '', answer_ru: '' })
+								append({ answer_la: '', answer_uz: '', answer_ru: '', answer_kaa: '', is_correct: false})
 							}
 							className='bg-green-500'
 							size='sm'

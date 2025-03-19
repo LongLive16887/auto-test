@@ -20,7 +20,7 @@ const formSchema = z.object({
 	type_id: z.number(),
 })
 
-export default function TiptapForm({onSuccess}: {onSuccess: () => void}) {
+export default function TiptapForm() {
 	const form = useForm<z.infer<typeof formSchema>>({
 		defaultValues: {
 			name_la: '',
@@ -33,7 +33,7 @@ export default function TiptapForm({onSuccess}: {onSuccess: () => void}) {
 
 	const { handleSubmit, control, setValue } = form
 	const [isLoading, setIsLoading] = useState(false)
-	const [apiError, setApiError] = useState('')
+	const [apiError] = useState('')
 
 	const handleLatinBlur = async (html: string, fieldPath: string) => {
 		if (!html.trim()) return

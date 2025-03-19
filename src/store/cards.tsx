@@ -63,7 +63,6 @@ export const useCardStore = create<EditStore>()(
 		}),
 		{
 			name: 'edit-card-store',
-			partialize: state => ({}),
 		}
 	)
 )

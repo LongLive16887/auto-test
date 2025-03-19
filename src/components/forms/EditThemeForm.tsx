@@ -20,14 +20,21 @@ const formSchema = z.object({
 	type_id: z.number(),
 })
 
+type themeType = {
+	id: string
+	name_la: string
+	name_ru: string
+	name_uz: string
+	image: string
+	type_id: number
+}
+
 interface EditThemeProps {
-	isOpen: boolean
-	onClose: () => void
-	data: object
+	themeData: themeType
 }
 
 
-export default function EditThemeForm({onSuccess, onClose, themeData}: EditThemeProps) {
+export default function EditThemeForm({themeData}: EditThemeProps) {
 	const form = useForm<z.infer<typeof formSchema>>({
 		defaultValues: themeData || {},
 	})
@@ -36,7 +43,7 @@ export default function EditThemeForm({onSuccess, onClose, themeData}: EditTheme
 
 	const { handleSubmit, control, setValue, reset } = form
 	const [isLoading, setIsLoading] = useState(false)
-	const [apiError, setApiError] = useState('')
+	const [apiError] = useState('')
 
 	const handleLatinBlur = async (html: string, fieldPath: string) => {
 		if (!html.trim()) return

@@ -46,9 +46,7 @@ const AppNav = () => {
 		})
 	}, [])
 
-	const handleFilter = () => {
-		
-	}
+
 
 	return (
 		<div className='bg-white rounded-xl p-5 flex justify-between mb-3.5 item-center'>

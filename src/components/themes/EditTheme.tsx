@@ -7,11 +7,20 @@ import EditThemeForm from '../forms/EditThemeForm'
 interface EditThemeProps {
 	isOpen: boolean
 	onClose: () => void
-	themeData: object
+	themeData: themeType
 }
 
+
+type themeType = {
+	id: string
+	name_la: string
+	name_ru: string
+	name_uz: string
+	image: string
+	type_id: number
+}
 const EditTheme = ({ isOpen, onClose, themeData }: EditThemeProps) => {
-	console.log(themeData, 224242424234)
+	console.log(themeData)
 	return (
 		<Dialog open={isOpen} onOpenChange={onClose}>
 			<DialogTrigger asChild>
