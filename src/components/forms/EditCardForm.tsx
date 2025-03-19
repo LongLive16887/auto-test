@@ -341,7 +341,7 @@ export default function EditCardForm() {
 						<div key={field.id} className='flex items-start flex-wrap gap-3.5'>
 							<FormField
 								control={control}
-								name={`answers.${index}.answer_la`}
+								name={`answers.${index}.answer_uz`}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Latin Answer</FormLabel>
@@ -372,7 +372,7 @@ export default function EditCardForm() {
 							/>
 							<FormField
 								control={control}
-								name={`answers.${index}.answer_uz`}
+								name={`answers.${index}.answer_la`}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Uzbek</FormLabel>

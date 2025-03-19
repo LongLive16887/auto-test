@@ -34,8 +34,11 @@ interface EditStore {
 	data: CardData[]
 	page: number
 	hasMore: boolean
-	fetchData: () => Promise<void>
+	fetchData: (group_id?: string) => Promise<void>
+	setData: (data: CardData[]) => void
+	setPage: (page: number) => void
 }
+
 export const useCardStore = create<EditStore>()(
 	persist(
 		(set, get) => ({
@@ -43,10 +46,15 @@ export const useCardStore = create<EditStore>()(
 			page: 0,
 			hasMore: true,
 
-			fetchData: async () => {
+			fetchData: async (id?: string, type: 'group' | 'lesson' = 'lesson') => {
 				try {
 					const { page, data } = get()
-					const res = await api.get(`/api/v1/question?page=${page}&size=10`)
+					const url = id
+						? type === 'group'
+							? `/api/v1/question?group_id=${id}`
+							: `/api/v1/question?groupId=${id}`
+						: `/api/v1/question?page=${page}&size=10`
+					const res = await api.get(url)
 					const newData = res.data.data.results
 
 					if (newData.length > 0) {
@@ -61,6 +69,9 @@ export const useCardStore = create<EditStore>()(
 					console.error('Ошибка загрузки данных:', error)
 				}
 			},
+
+			setData: (data: CardData[]) => set({ data }),
+			setPage: (page: number) => set({ page }),
 		}),
 		{
 			name: 'edit-card-store',
