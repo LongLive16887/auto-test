@@ -20,6 +20,15 @@ interface CardData {
 	image: string
 }
 
+interface EditStore {
+  data: CardData[]
+  page: number
+  hasMore: boolean
+  fetchData: (id?: string, type?: 'group' | 'lesson') => Promise<void> // Добавлен второй параметр
+  setData: (data: CardData[]) => void
+  setPage: (page: number) => void
+}
+
 function CardFilters() {
 	const [select, setSelect] = useState<CardData[]>([])
 	const [inputValue, setInputValue] = useState('') 
@@ -34,9 +43,9 @@ function CardFilters() {
 	const handleSelectChange = (value: string) => {
 		setData([])
 		setPage(0)
-		fetchData(value)
+		fetchData(value, 'lesson') // Указываем тип запроса
 	}
-
+	
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const value = event.target.value
 		if (/^\d*$/.test(value)) {
@@ -44,7 +53,7 @@ function CardFilters() {
 			if (value) {
 				setData([])
 				setPage(0)
-				fetchData(value)
+				fetchData(value, 'group') // Указываем тип запроса
 			}
 		}
 	}

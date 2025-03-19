@@ -21,13 +21,12 @@ import {
 	ChevronUp,
 	Lightbulb,
 	MessageCircleQuestion,
-	Monitor,
 	User2,
 } from 'lucide-react'
 
 const items = [
 	{ title: 'Savollar', url: '/', icon: MessageCircleQuestion },
-	{ title: 'Saytdagi Reklamalar', url: '/adverstings', icon: Monitor },
+	// { title: 'Saytdagi Reklamalar', url: '/adverstings', icon: Monitor },
 	{ title: 'Mavzular', url: '/themes', icon: Lightbulb },
 ]
 

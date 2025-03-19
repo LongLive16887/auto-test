@@ -31,50 +31,50 @@ interface CardData {
 }
 
 interface EditStore {
-	data: CardData[]
-	page: number
-	hasMore: boolean
-	fetchData: (group_id?: string) => Promise<void>
-	setData: (data: CardData[]) => void
-	setPage: (page: number) => void
+  data: CardData[]
+  page: number
+  hasMore: boolean
+  fetchData: (id?: string, type?: 'group' | 'lesson') => Promise<void> 
+  setData: (data: CardData[]) => void
+  setPage: (page: number) => void
 }
 
 export const useCardStore = create<EditStore>()(
-	persist(
-		(set, get) => ({
-			data: [],
-			page: 0,
-			hasMore: true,
+  persist(
+    (set, get) => ({
+      data: [],
+      page: 0,
+      hasMore: true,
 
-			fetchData: async (id?: string, type: 'group' | 'lesson' = 'lesson') => {
-				try {
-					const { page, data } = get()
-					const url = id
-						? type === 'group'
-							? `/api/v1/question?group_id=${id}`
-							: `/api/v1/question?groupId=${id}`
-						: `/api/v1/question?page=${page}&size=10`
-					const res = await api.get(url)
-					const newData = res.data.data.results
+      fetchData: async (id?: string, type: 'group' | 'lesson' = 'lesson') => {
+        try {
+          const { page, data } = get()
+          const url = id
+            ? type === 'group'
+              ? `/api/v1/question?group_id=${id}`
+              : `/api/v1/question?lessonId=${id}`
+            : `/api/v1/question?page=${page}&size=10`
+          const res = await api.get(url)
+          const newData = res.data.data.results
 
-					if (newData.length > 0) {
-						set({
-							data: [...data, ...newData],
-							page: page + 1,
-						})
-					} else {
-						set({ hasMore: false })
-					}
-				} catch (error) {
-					console.error('Ошибка загрузки данных:', error)
-				}
-			},
+          if (newData.length > 0) {
+            set({
+              data: [...data, ...newData],
+              page: page + 1,
+            })
+          } else {
+            set({ hasMore: false })
+          }
+        } catch (error) {
+          console.error('Ошибка загрузки данных:', error)
+        }
+      },
 
-			setData: (data: CardData[]) => set({ data }),
-			setPage: (page: number) => set({ page }),
-		}),
-		{
-			name: 'edit-card-store',
-		}
-	)
+      setData: (data: CardData[]) => set({ data }),
+      setPage: (page: number) => set({ page }),
+    }),
+    {
+      name: 'edit-card-store',
+    }
+  )
 )
