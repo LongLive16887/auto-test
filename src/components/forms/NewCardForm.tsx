@@ -299,7 +299,12 @@ export default function TiptapForm() {
 						render={({ field }) => (
 							<FormItem className='flex items-center gap-2.5'>
 								<FormControl>
-									<Select value={field.value} onValueChange={(value) => {field.onChange(value)}}>
+									<Select
+										value={field.value}
+										onValueChange={value => {
+											field.onChange(value)
+										}}
+									>
 										<SelectTrigger className='w-fit max-w-[800px]'>
 											<SelectValue placeholder='Mavzuni tanlang' />
 										</SelectTrigger>
@@ -325,7 +330,13 @@ export default function TiptapForm() {
 						<Button
 							type='button'
 							onClick={() =>
-								append({ answer_la: '', answer_uz: '', answer_ru: '', answer_kaa: '', is_correct: false})
+								append({
+									answer_la: '',
+									answer_uz: '',
+									answer_ru: '',
+									answer_kaa: '',
+									is_correct: false,
+								})
 							}
 							className='bg-green-500'
 							size='sm'
@@ -382,16 +393,34 @@ export default function TiptapForm() {
 									</FormItem>
 								)}
 							/>
-							{fields.length !== 1 ? (
-								<Button
-									type='button'
-									onClick={() => removeAnswer(index)}
-									className='bg-red-500'
-									size='icon'
-								>
-									<Minus className='h-4 w-4' />
-								</Button>
-							) : null}
+
+							<div className='flex items-center gap-2'>
+								<FormField
+									control={control}
+									name={`answers.${index}.is_correct`}
+									render={({ field }) => (
+										<FormItem className='flex items-center gap-2'>
+											<FormLabel>To'g'ri</FormLabel>
+											<FormControl>
+												<Checkbox
+													checked={field.value}
+													onCheckedChange={field.onChange}
+												/>
+											</FormControl>
+										</FormItem>
+									)}
+								/>
+								{fields.length > 1 && (
+									<Button
+										type='button'
+										onClick={() => removeAnswer(index)}
+										className='bg-red-500'
+										size='icon'
+									>
+										<Minus className='h-4 w-4' />
+									</Button>
+								)}
+							</div>
 						</div>
 					))}
 				</div>

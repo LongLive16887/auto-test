@@ -35,7 +35,7 @@ function CardFilters() {
 	const handleSelectChange = (value: string) => {
 		setData([])
 		setPage(0)
-		fetchData(value, 'lesson') // Указываем тип запроса
+		fetchData(value, 'lesson') 
 	}
 	
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +45,7 @@ function CardFilters() {
 			if (value) {
 				setData([])
 				setPage(0)
-				fetchData(value, 'group') // Указываем тип запроса
+				fetchData(value, 'group') 
 			}
 		}
 	}

@@ -341,7 +341,7 @@ export default function EditCardForm() {
 						<div key={field.id} className='flex items-start flex-wrap gap-3.5'>
 							<FormField
 								control={control}
-								name={`answers.${index}.answer_uz`}
+								name={`answers.${index}.answer_la`}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Latin Answer</FormLabel>
@@ -372,7 +372,7 @@ export default function EditCardForm() {
 							/>
 							<FormField
 								control={control}
-								name={`answers.${index}.answer_la`}
+								name={`answers.${index}.answer_uz`}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Uzbek</FormLabel>
@@ -385,16 +385,34 @@ export default function EditCardForm() {
 									</FormItem>
 								)}
 							/>
-							{fields.length !== 1 ? (
-								<Button
-									type='button'
-									onClick={() => removeAnswer(index)}
-									className='bg-red-500'
-									size='icon'
-								>
-									<Minus className='h-4 w-4' />
-								</Button>
-							) : null}
+
+							<div className='flex items-center gap-2'>
+								<FormField
+									control={control}
+									name={`answers.${index}.is_correct`}
+									render={({ field }) => (
+										<FormItem className='flex items-center gap-2'>
+											<FormLabel>To'g'ri</FormLabel>
+											<FormControl>
+												<Checkbox
+													checked={field.value}
+													onCheckedChange={field.onChange}
+												/>
+											</FormControl>
+										</FormItem>
+									)}
+								/>
+								{fields.length > 1 && (
+									<Button
+										type='button'
+										onClick={() => removeAnswer(index)}
+										className='bg-red-500'
+										size='icon'
+									>
+										<Minus className='h-4 w-4' />
+									</Button>
+								)}
+							</div>
 						</div>
 					))}
 				</div>
