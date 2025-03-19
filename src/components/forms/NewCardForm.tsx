@@ -86,7 +86,7 @@ export default function TiptapForm() {
 
 	const { handleSubmit, control, setValue } = form
 	const [isLoading, setIsLoading] = useState(false)
-	const [apiError, setApiError] = useState('')
+	const [apiError] = useState('')
 	const [select, setSelect] = useState<CardData[]>([])
 
 	const { fields, append, remove } = useFieldArray({
@@ -325,7 +325,7 @@ export default function TiptapForm() {
 						<Button
 							type='button'
 							onClick={() =>
-								append({ answer_la: '', answer_uz: '', answer_ru: '' })
+								append({ answer_la: '', answer_uz: '', answer_ru: '', answer_kaa: '', is_correct: false})
 							}
 							className='bg-green-500'
 							size='sm'
