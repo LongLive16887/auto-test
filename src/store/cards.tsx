@@ -3,6 +3,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 interface Answer {
+	id: number
 	answer_la: string
 	answer_uz: string
 	answer_ru: string
