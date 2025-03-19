@@ -10,7 +10,6 @@ interface EditThemeProps {
 	themeData: themeType
 }
 
-
 type themeType = {
 	id: string
 	name_la: string
@@ -20,7 +19,6 @@ type themeType = {
 	type_id: number
 }
 const EditTheme = ({ isOpen, onClose, themeData }: EditThemeProps) => {
-	console.log(themeData)
 	return (
 		<Dialog open={isOpen} onOpenChange={onClose}>
 			<DialogTrigger asChild>
@@ -30,8 +28,7 @@ const EditTheme = ({ isOpen, onClose, themeData }: EditThemeProps) => {
 				<VisuallyHidden>
 					<DialogTitle>Скрытый заголовок</DialogTitle>
 				</VisuallyHidden>
-
-				<EditThemeForm  themeData={themeData} />
+				<EditThemeForm themeData={themeData} />
 			</DialogContent>
 		</Dialog>
 	)
