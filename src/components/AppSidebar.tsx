@@ -26,7 +26,6 @@ import {
 
 const items = [
 	{ title: 'Savollar', url: '/', icon: MessageCircleQuestion },
-	// { title: 'Saytdagi Reklamalar', url: '/adverstings', icon: Monitor },
 	{ title: 'Mavzular', url: '/themes', icon: Lightbulb },
 ]
 

@@ -23,7 +23,7 @@ interface CardData {
 function CardFilters() {
 	const [select, setSelect] = useState<CardData[]>([])
 	const [inputValue, setInputValue] = useState('') 
-	const { fetchData, setData } = useCardStore()
+	const { fetchData, setData, setPage } = useCardStore()
 
 	useEffect(() => {
 		api.get('/api/groups?type_id=100').then(res => {
@@ -33,7 +33,7 @@ function CardFilters() {
 
 	const handleSelectChange = (value: string) => {
 		setData([])
-		// setPage(0)
+		setPage(0)
 		fetchData(value)
 	}
 
@@ -43,7 +43,7 @@ function CardFilters() {
 			setInputValue(value)
 			if (value) {
 				setData([])
-				// setPage(0)
+				setPage(0)
 				fetchData(value)
 			}
 		}
@@ -69,7 +69,7 @@ function CardFilters() {
 			<Input
 			border
 				type='text'
-
+				
 				value={inputValue}
 				onChange={handleInputChange}
 				placeholder='Введите group_id'
