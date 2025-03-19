@@ -51,7 +51,7 @@ export const useCardStore = create<EditStore>()(
           const { page, data } = get()
           const url = id
             ? type === 'group'
-              ? `/api/v1/question?group_id=${id}`
+              ? `/api/v1/question?groupId=${id}`
               : `/api/v1/question?lessonId=${id}`
             : `/api/v1/question?page=${page}&size=10`
           const res = await api.get(url)
