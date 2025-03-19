@@ -34,9 +34,10 @@ interface EditStore {
   data: CardData[]
   page: number
   hasMore: boolean
-  fetchData: (id?: string, type?: 'group' | 'lesson') => Promise<void> 
+  lastId?: string 
+  fetchData: (id?: string, type?: 'group' | 'lesson') => Promise<void>
   setData: (data: CardData[]) => void
-  setPage: (page: number) => void
+  resetPage: () => void 
 }
 
 export const useCardStore = create<EditStore>()(
@@ -45,33 +46,40 @@ export const useCardStore = create<EditStore>()(
       data: [],
       page: 0,
       hasMore: true,
+      lastId: undefined,
 
       fetchData: async (id?: string, type: 'group' | 'lesson' = 'lesson') => {
         try {
-          const { page, data } = get()
+          const { page, data, lastId } = get()
+          
+          // Сбрасываем пагинацию при изменении ID
+          if(id !== lastId) {
+            set({ page: 0, data: [], lastId: id, hasMore: true })
+            return
+          }
+
           const url = id
             ? type === 'group'
-              ? `/api/v1/question?groupId=${id}`
-              : `/api/v1/question?lessonId=${id}`
+              ? `/api/v1/question?groupId=${id}&page=${page}`
+              : `/api/v1/question?lessonId=${id}&page=${page}`
             : `/api/v1/question?page=${page}&size=10`
+
           const res = await api.get(url)
           const newData = res.data.data.results
 
-          if (newData.length > 0) {
-            set({
-              data: [...data, ...newData],
-              page: page + 1,
-            })
-          } else {
-            set({ hasMore: false })
-          }
+          set(state => ({
+            data: [...state.data, ...newData],
+            page: state.page + 1,
+            hasMore: newData.length > 0
+          }))
+          
         } catch (error) {
           console.error('Ошибка загрузки данных:', error)
         }
       },
 
       setData: (data: CardData[]) => set({ data }),
-      setPage: (page: number) => set({ page }),
+      resetPage: () => set({ page: 0, hasMore: true }),
     }),
     {
       name: 'edit-card-store',
