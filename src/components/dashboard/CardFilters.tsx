@@ -34,9 +34,9 @@ function CardFilters() {
 	const handleSelectChange = (value: string) => {
 		setData([])
 		setPage(0)
-		fetchData(value)
+		fetchData(value, 'lesson') 
 	}
-
+	
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const value = event.target.value
 		if (/^\d*$/.test(value)) {
@@ -44,7 +44,7 @@ function CardFilters() {
 			if (value) {
 				setData([])
 				setPage(0)
-				fetchData(value)
+				fetchData(value, 'group') 
 			}
 		}
 	}
