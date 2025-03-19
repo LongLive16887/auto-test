@@ -50,7 +50,7 @@ export const useCardStore = create<EditStore>()(
 
       fetchData: async (id?: string, type: 'group' | 'lesson' = 'lesson') => {
         try {
-          const { page, data, lastId } = get()
+          const { page, lastId } = get()
           
           // Сбрасываем пагинацию при изменении ID
           if(id !== lastId) {
