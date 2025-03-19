@@ -20,14 +20,6 @@ interface CardData {
 	image: string
 }
 
-interface EditStore {
-  data: CardData[]
-  page: number
-  hasMore: boolean
-  fetchData: (id?: string, type?: 'group' | 'lesson') => Promise<void> // Добавлен второй параметр
-  setData: (data: CardData[]) => void
-  setPage: (page: number) => void
-}
 
 function CardFilters() {
 	const [select, setSelect] = useState<CardData[]>([])
