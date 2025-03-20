@@ -18,7 +18,6 @@ import { useEditCardStore } from '@/store/editCard'
 import { useUserStore } from '@/store/user'
 import { Check, Pencil, X } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
 
 interface Answer {
 	id: number
