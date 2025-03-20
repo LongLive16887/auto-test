@@ -8,11 +8,13 @@ const CustomEditor = ({
   onChange,
   onBlur, 
   disabled = false,
+  answer = false,
 }: {
   content: string
   onChange: (content: string) => void
   onBlur?: () => void 
   disabled?: boolean
+  answer?: boolean
 }) => {
   const editor = useEditor({
     extensions: [
@@ -25,9 +27,9 @@ const CustomEditor = ({
     content,
     editorProps: {
       attributes: {
-        class: `min-h-[70px] p-3 w-[430px] text-sm focus:outline-none prose prose-sm prose-p:my-0 prose-p:leading-snug ${
+        class: `min-h-[70px] p-3 text-sm focus:outline-none prose prose-sm prose-p:my-0 prose-p:leading-snug ${
           disabled ? 'bg-gray-50' : ''
-        }`,
+        } ${answer ? 'w-[430px]' : 'w-[452px]'}`,
       },
       handleDOMEvents: {
         blur: () => {

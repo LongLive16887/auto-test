@@ -37,7 +37,7 @@ const Input = React.forwardRef<
 					onChange?.(e)
 				}}
 				className={cn(
-					'file:text-foreground placeholder:text-muted-foreground focus:border-primary selection:bg-primary selection:text-primary-foreground flex h-12 w-full min-w-0 rounded-xl bg-white px-3 py-2 text-base outline-none file:inline-flex file:h-7 file:border-0 file:bg-white file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:textlg',
+					'file:text-foreground placeholder:text-muted-foreground focus:border-primary selection:bg-primary selection:text-primary-foreground flex h-12 w-full min-w-0 rounded-sm bg-white px-3 py-2 text-base outline-none file:inline-flex file:h-7 file:border-0 file:bg-white file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:textlg',
 					'aria-invalid:border-destructive',
 					border && 'border border-input',
 					(showClearButton || showPasswordToggle) && 'pr-10', 

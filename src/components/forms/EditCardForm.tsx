@@ -22,6 +22,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../ui/select'
+import { useCardStore } from '@/store/cards'
 
 const formSchema = z.object({
 	question_la: z.string(),
@@ -58,13 +59,8 @@ interface CardData {
 }
 
 export default function EditCardForm() {
-	const { currentCard } = useEditCardStore()
-	useEffect(() => {
-		api.get('/api/groups?type_id=100').then(res => {
-			setSelect(res.data.data)
-		})
-	}, [])
-
+	const { currentCard, toggleIsOpen } = useEditCardStore()
+	const {fetchData, filterType, filterId} = useCardStore()
 	const form = useForm<z.infer<typeof formSchema>>()
 
 	const { handleSubmit, control, setValue } = form
@@ -73,17 +69,26 @@ export default function EditCardForm() {
 	const [apiError] = useState('')
 	const [select, setSelect] = useState<CardData[]>([])
 
-	useEffect(() => {
-		if (currentCard && !isFormInitialized) {
-			form.reset(currentCard)
-			setIsFormInitialized(true)
-		}
-	}, [currentCard, form, isFormInitialized])
-
-	const { fields, append, remove } = useFieldArray({
+	const { fields, append, remove, replace } = useFieldArray({
 		control,
 		name: 'answers',
 	})
+	useEffect(() => {
+		api.get('/api/groups?type_id=100').then(res => {
+			setSelect(res.data.data)
+		})
+	}, [])
+
+	useEffect(() => {
+    if (currentCard && !isFormInitialized) {
+        form.reset(currentCard)
+        setIsFormInitialized(true)
+
+        if (currentCard.answers && currentCard.answers.length > 0) {
+					replace(currentCard.answers);
+        }
+    }
+}, [currentCard, form, isFormInitialized, append])
 
 	const handleLatinBlur = async (html: string, fieldPath: string) => {
 		if (!html.trim()) return
@@ -127,7 +132,9 @@ export default function EditCardForm() {
 			description_kaa: 'kaa',
 		}
 		api.put('api/v1/question', transformedData).then(() => {
-			useEditCardStore.getState().setOpen(false)
+			toggleIsOpen()
+			useCardStore.setState({ page: 0 })  
+			fetchData(filterId ?? undefined, filterType ?? undefined)
 		})
 	}
 	const removeAnswer = (index: number) => {
@@ -298,9 +305,9 @@ export default function EditCardForm() {
 							<FormItem className='flex items-center gap-2.5'>
 								<FormControl>
 									<Select
-										value={field.value}
+										value={String(field.value)}
 										onValueChange={value => {
-											field.onChange(value)
+											field.onChange(String(value))
 										}}
 									>
 										<SelectTrigger className='w-fit max-w-[800px]'>
@@ -309,8 +316,10 @@ export default function EditCardForm() {
 										<SelectContent>
 											<SelectGroup>
 												{select.map(item => (
-													<SelectItem key={item.id} value={item.id}>
-														{item.name_la}
+													<SelectItem key={item?.id} value={item?.id}>
+														<span
+															dangerouslySetInnerHTML={{ __html: item.name_uz }}
+														/>
 													</SelectItem>
 												))}
 											</SelectGroup>
@@ -328,7 +337,13 @@ export default function EditCardForm() {
 						<Button
 							type='button'
 							onClick={() =>
-								append({ answer_la: '', answer_uz: '', answer_ru: '', answer_kaa: '', is_correct: false})
+								append({
+									answer_la: '',
+									answer_uz: '',
+									answer_ru: '',
+									answer_kaa: '',
+									is_correct: false,
+								})
 							}
 							className='bg-green-500'
 							size='sm'
@@ -338,78 +353,82 @@ export default function EditCardForm() {
 					</div>
 
 					{fields.map((field, index) => (
-						<div key={field.id} className='flex items-start flex-wrap gap-3.5'>
+						<div key={field.id} className='flex items-center gap-3.5'>
 							<FormField
 								control={control}
-								name={`answers.${index}.answer_la`}
+								name={`answers.${index}.is_correct`}
 								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Latin Answer</FormLabel>
+									<FormItem className='flex items-center gap-2'>
 										<FormControl>
-											<CustomEditor
-												content={field.value}
-												onChange={field.onChange}
-												onBlur={() => handleAnswerBlur(index)(field.value)}
+											<Checkbox
+												checked={field.value}
+												onCheckedChange={field.onChange}
 											/>
 										</FormControl>
 									</FormItem>
 								)}
 							/>
-							<FormField
-								control={control}
-								name={`answers.${index}.answer_ru`}
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Russian</FormLabel>
-										<FormControl>
-											<CustomEditor
-												content={field.value}
-												onChange={field.onChange}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={control}
-								name={`answers.${index}.answer_uz`}
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Uzbek</FormLabel>
-										<FormControl>
-											<CustomEditor
-												content={field.value}
-												onChange={field.onChange}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-
-							<div className='flex items-center gap-2'>
+							<div className='flex items-start gap-3.5'>
 								<FormField
 									control={control}
-									name={`answers.${index}.is_correct`}
+									name={`answers.${index}.answer_la`}
 									render={({ field }) => (
-										<FormItem className='flex items-center gap-2'>
-											<FormLabel>To'g'ri</FormLabel>
+										<FormItem>
+											<FormLabel>Latin Answer</FormLabel>
 											<FormControl>
-												<Checkbox
-													checked={field.value}
-													onCheckedChange={field.onChange}
+												<CustomEditor
+													answer
+													content={field.value}
+													onChange={field.onChange}
+													onBlur={() => handleAnswerBlur(index)(field.value)}
 												/>
 											</FormControl>
 										</FormItem>
 									)}
 								/>
+								<FormField
+									control={control}
+									name={`answers.${index}.answer_ru`}
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Russian</FormLabel>
+											<FormControl>
+												<CustomEditor
+													answer
+													content={field.value}
+													onChange={field.onChange}
+												/>
+											</FormControl>
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={control}
+									name={`answers.${index}.answer_uz`}
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Uzbek</FormLabel>
+											<FormControl>
+												<CustomEditor
+													answer
+													content={field.value}
+													onChange={field.onChange}
+												/>
+											</FormControl>
+										</FormItem>
+									)}
+								/>
+							</div>
+
+							<div className='flex items-center gap-2'>
 								{fields.length > 1 && (
 									<Button
+										size='sm'
 										type='button'
 										onClick={() => removeAnswer(index)}
 										className='bg-red-500'
-										size='icon'
 									>
-										<Minus className='h-4 w-4' />
+										<Minus />
 									</Button>
 								)}
 							</div>
@@ -418,7 +437,7 @@ export default function EditCardForm() {
 				</div>
 
 				<Button type='submit' disabled={isLoading}>
-					Submit
+					O'zgartirish
 				</Button>
 			</form>
 		</Form>

@@ -16,11 +16,9 @@ import {
 import { cn } from '@/lib/utils'
 import { useEditCardStore } from '@/store/editCard'
 import { useUserStore } from '@/store/user'
-import { DialogTitle } from '@radix-ui/react-dialog'
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { Check, Pencil, X } from 'lucide-react'
 import { useState } from 'react'
-import EditCardForm from '../forms/EditCardForm'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 interface Answer {
 	id: number
@@ -53,6 +51,17 @@ interface CardData {
 const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 	const [isImageOpen, setIsImageOpen] = useState(false)
 	const { userRoles } = useUserStore()
+	const { setId, fetchCardById } = useEditCardStore()
+	const { toggleIsOpen } = useEditCardStore()
+
+
+	function handleEdit(id: number) {
+		setId(id)
+		fetchCardById(id)
+		toggleIsOpen()
+	}
+
+	
 	return (
 		<Card className='w-full max-w-sm  flex flex-col justify-between  shadow-lg rounded-2xl p-4'>
 			<CardHeader className='text-sm font-bold text-center'>
@@ -194,29 +203,9 @@ const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 					</DropdownMenu>
 
 					{userRoles.includes('UPDATE') ? (
-						<Dialog
-						onOpenChange={async (open) => {
-							const { setId, fetchCardById, reset } = useEditCardStore.getState();
-							if (open) {
-								setId(cardData.id);
-								await fetchCardById(cardData.id);
-							} else {
-								reset(); 
-							}
-						}}
-						>
-							<DialogTrigger asChild>
-								<Button>
-									<Pencil />
-								</Button>
-							</DialogTrigger>
-							<DialogContent className='sm:max-w-[1400px]'>
-								<VisuallyHidden>
-									<DialogTitle>Скрытый заголовок</DialogTitle>
-								</VisuallyHidden>
-								<EditCardForm />
-							</DialogContent>
-						</Dialog>
+						<Button onClick={() => handleEdit(cardData.id)}>
+							<Pencil />
+						</Button>
 					) : null}
 				</div>
 			</CardContent>

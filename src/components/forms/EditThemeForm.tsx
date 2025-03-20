@@ -21,7 +21,7 @@ const formSchema = z.object({
 })
 
 type themeType = {
-	id: string
+	id: number
 	name_la: string
 	name_ru: string
 	name_uz: string
@@ -39,6 +39,7 @@ export default function EditThemeForm({themeData}: EditThemeProps) {
 		defaultValues: themeData || {},
 	})
 
+	console.log(23424242, themeData)
 	
 
 	const { handleSubmit, control, setValue, reset } = form
@@ -158,7 +159,7 @@ export default function EditThemeForm({themeData}: EditThemeProps) {
 				</div>
 
 				<Button type='submit' disabled={isLoading}>
-					Submit
+				O'zgartirish
 				</Button>
 			</form>
 		</Form>

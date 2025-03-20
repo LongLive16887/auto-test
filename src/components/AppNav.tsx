@@ -29,9 +29,8 @@ const AppNav = () => {
 				<p className='font-semibold text-xl text-center'>{title}</p>
 			</div>
 			<div className='flex items-center gap-3'>
-				<div>
-					<CardFilters />
-				</div>
+				{location.pathname === '/' ? <CardFilters /> : null}
+
 				{userRoles.includes('WRITE') && location.pathname === '/' ? (
 					<CreateCard />
 				) : null}

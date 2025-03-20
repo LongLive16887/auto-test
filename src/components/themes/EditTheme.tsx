@@ -11,7 +11,7 @@ interface EditThemeProps {
 }
 
 type themeType = {
-	id: string
+	id: number
 	name_la: string
 	name_ru: string
 	name_uz: string
@@ -24,7 +24,7 @@ const EditTheme = ({ isOpen, onClose, themeData }: EditThemeProps) => {
 			<DialogTrigger asChild>
 				<Button variant='outline'>Mavzu qo'shish</Button>
 			</DialogTrigger>
-			<DialogContent className='sm:max-w-[1400px]'>
+			<DialogContent className='sm:max-w-[1460px]'>
 				<VisuallyHidden>
 					<DialogTitle>Скрытый заголовок</DialogTitle>
 				</VisuallyHidden>

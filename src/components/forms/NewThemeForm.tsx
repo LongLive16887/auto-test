@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import CustomEditor from '../tipTapeditor/CustomEditor'
 import { Button } from '../ui/button'
+import { useThemeStore } from '@/store/theme'
 
 const formSchema = z.object({
 	name_la: z.string(),
@@ -34,6 +35,7 @@ export default function TiptapForm() {
 	const { handleSubmit, control, setValue } = form
 	const [isLoading, setIsLoading] = useState(false)
 	const [apiError] = useState('')
+	const {toggleIsOpen,fetchData} = useThemeStore()
 
 	const handleLatinBlur = async (html: string, fieldPath: string) => {
 		if (!html.trim()) return
@@ -65,8 +67,9 @@ export default function TiptapForm() {
 	}
 
 	const onSubmit = (data: any) => {
-		api.post('api/groups', data).then(res => {
-			console.log(res)
+		api.post('api/groups', data).then(() => {
+			toggleIsOpen()
+			fetchData(100)
 		})
 	}
 
@@ -137,7 +140,7 @@ export default function TiptapForm() {
 				</div>
 
 				<Button type='submit' disabled={isLoading}>
-					Submit
+					Yaratish
 				</Button>
 			</form>
 		</Form>

@@ -1,7 +1,8 @@
 import api from '@/api/axios'
 import { useCardStore } from '@/store/cards'
 import { useEffect, useState } from 'react'
-import { Input } from '../ui/input' 
+import { Button } from '../ui/button'
+import { Input } from '../ui/input'
 import {
 	Select,
 	SelectContent,
@@ -19,39 +20,70 @@ interface CardData {
 	name_uz: string
 	image: string
 }
-
-function CardFilters() {
+export default function CardFilters() {
 	const [select, setSelect] = useState<CardData[]>([])
-	const [inputValue, setInputValue] = useState('') 
-	const { fetchData, setData, setPage } = useCardStore()
+	const [isOpen, setIsOpen] = useState(false)
 
+	// Получаем сохраненные фильтры
+	const savedLessonId = localStorage.getItem('lessonId') || ''
+	const savedGroupId = localStorage.getItem('groupId') || ''
+
+	// Устанавливаем начальные значения
+	const [selectedLesson, setSelectedLesson] = useState(savedLessonId)
+	const [inputGroup, setInputGroup] = useState(savedGroupId)
+
+	const { setFilter } = useCardStore()
+
+	// Загружаем фильтры при монтировании
 	useEffect(() => {
+		if (savedLessonId) setFilter(savedLessonId, 'lesson')
+		if (savedGroupId) setFilter(savedGroupId, 'group')
+
 		api.get('/api/groups?type_id=100').then(res => {
 			setSelect(res.data.data)
 		})
 	}, [])
 
 	const handleSelectChange = (value: string) => {
-		setData([])
-		setPage(0)
-		fetchData(value, 'lesson') 
+		setSelectedLesson(value)
+		setFilter(value, 'lesson')
+		localStorage.setItem('lessonId', value)
 	}
-	
+
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const value = event.target.value
 		if (/^\d*$/.test(value)) {
-			setInputValue(value)
-			if (value) {
-				setData([])
-				setPage(0)
-				fetchData(value, 'group') 
-			}
+			setInputGroup(value)
+			setFilter(value, 'group')
+			localStorage.setItem('groupId', value)
 		}
+	}
+
+	const handleClearFilters = () => {
+		setSelectedLesson('')
+		setInputGroup('')
+		setFilter(null, null)
+		localStorage.removeItem('lessonId')
+		localStorage.removeItem('groupId')
+		setIsOpen(false)
 	}
 
 	return (
 		<div className='flex items-center gap-4'>
-			<Select onValueChange={handleSelectChange}>
+			<Button
+				variant='secondary'
+				disabled={!selectedLesson && !inputGroup}
+				size='lg'
+				onClick={handleClearFilters}
+			>
+				Tozalash
+			</Button>
+			<Select
+				open={isOpen}
+				onOpenChange={setIsOpen}
+				onValueChange={handleSelectChange}
+				value={selectedLesson}
+			>
 				<SelectTrigger className='w-fit max-w-[800px]'>
 					<SelectValue placeholder='Mavzuni tanlang' />
 				</SelectTrigger>
@@ -59,7 +91,7 @@ function CardFilters() {
 					<SelectGroup>
 						{select.map(item => (
 							<SelectItem key={item.id} value={item.id}>
-								{item.name_la}
+								<span dangerouslySetInnerHTML={{ __html: item.name_uz }} />
 							</SelectItem>
 						))}
 					</SelectGroup>
@@ -67,16 +99,13 @@ function CardFilters() {
 			</Select>
 
 			<Input
-			border
-				type='text'
-				
-				value={inputValue}
+				border
+				type='number'
+				value={inputGroup}
 				onChange={handleInputChange}
-				placeholder='Введите group_id'
-				className='w-fit'
+				placeholder='Bilet raqami'
+				className='w-48 h-8.5'
 			/>
 		</div>
 	)
 }
-
-export default CardFilters

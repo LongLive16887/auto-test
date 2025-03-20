@@ -21,6 +21,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../ui/select'
+import { useCardStore } from '@/store/cards'
 
 const formSchema = z.object({
 	question_la: z.string(),
@@ -88,6 +89,7 @@ export default function TiptapForm() {
 	const [isLoading, setIsLoading] = useState(false)
 	const [apiError] = useState('')
 	const [select, setSelect] = useState<CardData[]>([])
+	const { fetchData, filterId, filterType, toggleIsOpen } = useCardStore()
 
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -128,8 +130,10 @@ export default function TiptapForm() {
 	}
 
 	const onSubmit = (data: any) => {
-		api.post('api/v1/question', data).then(res => {
-			console.log(res)
+		api.post('api/v1/question', data).then(() => {
+			toggleIsOpen()
+			fetchData(filterId ?? undefined, filterType ?? undefined)
+
 		})
 	}
 	const removeAnswer = (index: number) => {
@@ -312,7 +316,7 @@ export default function TiptapForm() {
 											<SelectGroup>
 												{select.map(item => (
 													<SelectItem key={item.id} value={item.id}>
-														{item.name_la}
+														<span dangerouslySetInnerHTML={{ __html: item.name_uz }} />
 													</SelectItem>
 												))}
 											</SelectGroup>
@@ -346,78 +350,82 @@ export default function TiptapForm() {
 					</div>
 
 					{fields.map((field, index) => (
-						<div key={field.id} className='flex items-start flex-wrap gap-3.5'>
+						<div key={field.id} className='flex items-center gap-3.5'>
 							<FormField
 								control={control}
-								name={`answers.${index}.answer_la`}
+								name={`answers.${index}.is_correct`}
 								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Latin Answer</FormLabel>
+									<FormItem className='flex items-center gap-2'>
 										<FormControl>
-											<CustomEditor
-												content={field.value}
-												onChange={field.onChange}
-												onBlur={() => handleAnswerBlur(index)(field.value)}
+											<Checkbox
+												checked={field.value}
+												onCheckedChange={field.onChange}
 											/>
 										</FormControl>
 									</FormItem>
 								)}
 							/>
-							<FormField
-								control={control}
-								name={`answers.${index}.answer_ru`}
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Russian</FormLabel>
-										<FormControl>
-											<CustomEditor
-												content={field.value}
-												onChange={field.onChange}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={control}
-								name={`answers.${index}.answer_uz`}
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Uzbek</FormLabel>
-										<FormControl>
-											<CustomEditor
-												content={field.value}
-												onChange={field.onChange}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-
-							<div className='flex items-center gap-2'>
+							<div className='flex items-start gap-3.5'>
 								<FormField
 									control={control}
-									name={`answers.${index}.is_correct`}
+									name={`answers.${index}.answer_la`}
 									render={({ field }) => (
-										<FormItem className='flex items-center gap-2'>
-											<FormLabel>To'g'ri</FormLabel>
+										<FormItem>
+											<FormLabel>Latin Answer</FormLabel>
 											<FormControl>
-												<Checkbox
-													checked={field.value}
-													onCheckedChange={field.onChange}
+												<CustomEditor
+													answer
+													content={field.value}
+													onChange={field.onChange}
+													onBlur={() => handleAnswerBlur(index)(field.value)}
 												/>
 											</FormControl>
 										</FormItem>
 									)}
 								/>
+								<FormField
+									control={control}
+									name={`answers.${index}.answer_ru`}
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Russian</FormLabel>
+											<FormControl>
+												<CustomEditor
+													answer
+													content={field.value}
+													onChange={field.onChange}
+												/>
+											</FormControl>
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={control}
+									name={`answers.${index}.answer_uz`}
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Uzbek</FormLabel>
+											<FormControl>
+												<CustomEditor
+													answer
+													content={field.value}
+													onChange={field.onChange}
+												/>
+											</FormControl>
+										</FormItem>
+									)}
+								/>
+							</div>
+
+							<div className='flex items-center gap-2'>
 								{fields.length > 1 && (
 									<Button
+										size='sm'
 										type='button'
 										onClick={() => removeAnswer(index)}
 										className='bg-red-500'
-										size='icon'
 									>
-										<Minus className='h-4 w-4' />
+										<Minus />
 									</Button>
 								)}
 							</div>
@@ -426,7 +434,7 @@ export default function TiptapForm() {
 				</div>
 
 				<Button type='submit' disabled={isLoading}>
-					Submit
+						Yaratish
 				</Button>
 			</form>
 		</Form>
