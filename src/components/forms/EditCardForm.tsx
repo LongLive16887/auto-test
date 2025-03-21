@@ -6,12 +6,14 @@ import {
 	FormItem,
 	FormLabel,
 } from '@/components/ui/form'
+import { useCardStore } from '@/store/cards'
 import { useEditCardStore } from '@/store/editCard'
 import { Minus, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import CustomEditor from '../tipTapeditor/CustomEditor'
+import { SelectData } from '../types'
 import { Button } from '../ui/button'
 import { Checkbox } from '../ui/checkbox'
 import {
@@ -22,7 +24,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../ui/select'
-import { useCardStore } from '@/store/cards'
 
 const formSchema = z.object({
 	question_la: z.string(),
@@ -49,46 +50,49 @@ const formSchema = z.object({
 	),
 })
 
-interface CardData {
-	id: string
-	type_id: number
-	name_ru: string
-	name_la: string
-	name_uz: string
-	image: string
-}
-
 export default function EditCardForm() {
-	const { currentCard, toggleIsOpen } = useEditCardStore()
-	const {fetchData, filterType, filterId} = useCardStore()
+	const { currentCard, toggleIsOpen, reset } = useEditCardStore()
+	const { fetchData, filterType, filterId } = useCardStore()
 	const form = useForm<z.infer<typeof formSchema>>()
 
 	const { handleSubmit, control, setValue } = form
 	const [isFormInitialized, setIsFormInitialized] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [apiError] = useState('')
-	const [select, setSelect] = useState<CardData[]>([])
+	const [select, setSelect] = useState<SelectData[]>([])
 
 	const { fields, append, remove, replace } = useFieldArray({
 		control,
 		name: 'answers',
 	})
 	useEffect(() => {
-		api.get('/api/groups?type_id=100').then(res => {
-			setSelect(res.data.data)
-		})
+		api
+			.get<{ data: SelectData[] }>('/api/groups?type_id=100')
+			.then(res => {
+				const data = res.data.data.map(item => ({
+					...item,
+					id: String(item.id),
+				}))
+				setSelect(data)
+			})
+			.catch(error => console.error('API Error:', error))
 	}, [])
 
 	useEffect(() => {
-    if (currentCard && !isFormInitialized) {
-        form.reset(currentCard)
-        setIsFormInitialized(true)
+		if (currentCard && !isFormInitialized && select.length > 0) {
+			const formData = {
+				...currentCard,
+				lesson_id:
+					currentCard.lesson_id === 'null' ? '' : String(currentCard.lesson_id),
+			}
+			form.reset(formData)
+			setIsFormInitialized(true)
 
-        if (currentCard.answers && currentCard.answers.length > 0) {
-					replace(currentCard.answers);
-        }
-    }
-}, [currentCard, form, isFormInitialized, append])
+			if (currentCard.answers && currentCard.answers.length > 0) {
+				replace(currentCard.answers)
+			}
+		}
+	}, [currentCard, form, isFormInitialized, replace, select])
 
 	const handleLatinBlur = async (html: string, fieldPath: string) => {
 		if (!html.trim()) return
@@ -133,7 +137,8 @@ export default function EditCardForm() {
 		}
 		api.put('api/v1/question', transformedData).then(() => {
 			toggleIsOpen()
-			useCardStore.setState({ page: 0 })  
+			useCardStore.setState({ page: 0 })
+			reset()
 			fetchData(filterId ?? undefined, filterType ?? undefined)
 		})
 	}
@@ -305,9 +310,9 @@ export default function EditCardForm() {
 							<FormItem className='flex items-center gap-2.5'>
 								<FormControl>
 									<Select
-										value={String(field.value)}
+										value={field.value}
 										onValueChange={value => {
-											field.onChange(String(value))
+											field.onChange(value)
 										}}
 									>
 										<SelectTrigger className='w-fit max-w-[800px]'>
@@ -316,9 +321,11 @@ export default function EditCardForm() {
 										<SelectContent>
 											<SelectGroup>
 												{select.map(item => (
-													<SelectItem key={item?.id} value={item?.id}>
+													<SelectItem key={item.id} value={String(item.id)}>
 														<span
-															dangerouslySetInnerHTML={{ __html: item.name_uz }}
+															dangerouslySetInnerHTML={{
+																__html: item.name_uz || 'Empty',
+															}}
 														/>
 													</SelectItem>
 												))}

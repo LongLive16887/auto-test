@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import CustomEditor from '../tipTapeditor/CustomEditor'
 import { Button } from '../ui/button'
+import { useThemeStore } from '@/store/theme'
 
 const formSchema = z.object({
 	name_la: z.string(),
@@ -31,17 +32,17 @@ type themeType = {
 
 interface EditThemeProps {
 	themeData: themeType
+	onClose: () => void
 }
 
 
-export default function EditThemeForm({themeData}: EditThemeProps) {
+export default function EditThemeForm({themeData, onClose}: EditThemeProps) {
 	const form = useForm<z.infer<typeof formSchema>>({
 		defaultValues: themeData || {},
 	})
 
-	console.log(23424242, themeData)
 	
-
+	const {fetchData}  = useThemeStore()
 	const { handleSubmit, control, setValue, reset } = form
 	const [isLoading, setIsLoading] = useState(false)
 	const [apiError] = useState('')
@@ -87,8 +88,9 @@ export default function EditThemeForm({themeData}: EditThemeProps) {
 			...data,
 			type_id: 100,
 			id: themeData.id
-		}).then(res => {
-			console.log(res)
+		}).then(() => {
+      fetchData(100)
+			onClose()
 		})
 	}
 

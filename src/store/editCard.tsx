@@ -43,10 +43,20 @@ export const useEditCardStore = create<EditStore>()(set => ({
 
 	fetchCardById: async (id: number) => {
 		try {
-			const response = await api.get(`/api/v1/question/id?id=${id}`)
-			set({ currentCard: response.data.data })
-			console.log(useEditCardStore.getState().currentCard)
-		} catch (error) {}
+			const response = await api.get(`/api/v1/question/id?id=${id}`);
+			const data = response.data.data;
+			
+			const modifiedData = {
+				...data,
+				group_id: String(data.group_id),
+				lesson_id: String(data.lesson_id) 
+			};
+	
+			set({ currentCard: modifiedData });
+			console.log('Modified card data:', useEditCardStore.getState().currentCard);
+		} catch (error) {
+			console.error('Error fetching card:', error);
+		}
 	},
 
 	setId: (id?: number) => {

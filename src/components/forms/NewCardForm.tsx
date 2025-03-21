@@ -6,11 +6,13 @@ import {
 	FormItem,
 	FormLabel,
 } from '@/components/ui/form'
+import { useCardStore } from '@/store/cards'
 import { Minus, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import CustomEditor from '../tipTapeditor/CustomEditor'
+import { SelectData } from '../types/select'
 import { Button } from '../ui/button'
 import { Checkbox } from '../ui/checkbox'
 import {
@@ -21,7 +23,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../ui/select'
-import { useCardStore } from '@/store/cards'
 
 const formSchema = z.object({
 	question_la: z.string(),
@@ -47,15 +48,6 @@ const formSchema = z.object({
 		})
 	),
 })
-
-interface CardData {
-	id: string
-	type_id: number
-	name_ru: string
-	name_la: string
-	name_uz: string
-	image: string
-}
 
 export default function TiptapForm() {
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -88,7 +80,7 @@ export default function TiptapForm() {
 	const { handleSubmit, control, setValue } = form
 	const [isLoading, setIsLoading] = useState(false)
 	const [apiError] = useState('')
-	const [select, setSelect] = useState<CardData[]>([])
+	const [select, setSelect] = useState<SelectData[]>([])
 	const { fetchData, filterId, filterType, toggleIsOpen } = useCardStore()
 
 	const { fields, append, remove } = useFieldArray({
@@ -133,7 +125,6 @@ export default function TiptapForm() {
 		api.post('api/v1/question', data).then(() => {
 			toggleIsOpen()
 			fetchData(filterId ?? undefined, filterType ?? undefined)
-
 		})
 	}
 	const removeAnswer = (index: number) => {
@@ -316,7 +307,9 @@ export default function TiptapForm() {
 											<SelectGroup>
 												{select.map(item => (
 													<SelectItem key={item.id} value={item.id}>
-														<span dangerouslySetInnerHTML={{ __html: item.name_uz }} />
+														<span
+															dangerouslySetInnerHTML={{ __html: item.name_uz }}
+														/>
 													</SelectItem>
 												))}
 											</SelectGroup>
@@ -434,7 +427,7 @@ export default function TiptapForm() {
 				</div>
 
 				<Button type='submit' disabled={isLoading}>
-						Yaratish
+					Yaratish
 				</Button>
 			</form>
 		</Form>

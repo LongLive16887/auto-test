@@ -16,7 +16,6 @@ const EditCard = () => {
 				<VisuallyHidden>
 					<DialogTitle>Скрытый заголовок</DialogTitle>
 				</VisuallyHidden>
-
 				<NewCardForm />
 			</DialogContent>
 		</Dialog>

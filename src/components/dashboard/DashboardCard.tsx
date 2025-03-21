@@ -1,3 +1,4 @@
+import { CardData } from '@/components/types/index'
 import {
 	Accordion,
 	AccordionContent,
@@ -19,40 +20,11 @@ import { useUserStore } from '@/store/user'
 import { Check, Pencil, X } from 'lucide-react'
 import { useState } from 'react'
 
-interface Answer {
-	id: number
-	answer_la: string
-	answer_uz: string
-	answer_ru: string
-	answer_kaa: string
-	is_correct: boolean
-}
-
-interface CardData {
-	id: number
-	question_la: string
-	question_ru: string
-	question_uz: string
-	question_kaa: string
-	question_description_la: string
-	question_description_ru: string
-	question_description_uz: string
-	description_kaa: string
-	is_reverse: boolean
-	group_id: number
-	order_number: number
-	lesson_id: string
-	has_video: boolean
-	answers: Answer[]
-	media: string
-}
-
 const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 	const [isImageOpen, setIsImageOpen] = useState(false)
 	const { userRoles } = useUserStore()
 	const { setId, fetchCardById } = useEditCardStore()
 	const { toggleIsOpen } = useEditCardStore()
-
 
 	function handleEdit(id: number) {
 		setId(id)
@@ -60,7 +32,6 @@ const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 		toggleIsOpen()
 	}
 
-	
 	return (
 		<Card className='w-full max-w-sm  flex flex-col justify-between  shadow-lg rounded-2xl p-4'>
 			<CardHeader className='text-sm font-bold text-center'>

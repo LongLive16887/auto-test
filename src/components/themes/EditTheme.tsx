@@ -28,7 +28,7 @@ const EditTheme = ({ isOpen, onClose, themeData }: EditThemeProps) => {
 				<VisuallyHidden>
 					<DialogTitle>Скрытый заголовок</DialogTitle>
 				</VisuallyHidden>
-				<EditThemeForm themeData={themeData} />
+				<EditThemeForm themeData={themeData} onClose={onClose} />
 			</DialogContent>
 		</Dialog>
 	)

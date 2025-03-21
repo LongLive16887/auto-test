@@ -14,17 +14,21 @@ interface ThemeStore {
   data: Theme[]
   isLoading: boolean
   isOpen: boolean
+  isEdit: boolean
   themeData: Theme | null
   fetchData: (typeId: number) => Promise<void>
   createTheme: (theme: Omit<Theme, 'id'>) => Promise<void>
   editTheme: (id: number) => Promise<void>
   toggleIsOpen: () => void
+  toggleIsEdit: () => void
+
 }
 
 export const useThemeStore = create<ThemeStore>((set) => ({
   data: [],
   isLoading: false,
   isOpen: false,
+  isEdit: false,
   themeData: null,
 
   fetchData: async (typeId: number) => {
@@ -59,5 +63,9 @@ export const useThemeStore = create<ThemeStore>((set) => ({
 
   toggleIsOpen: () => {
     set((state) => ({ isOpen: !state.isOpen }))
+  },
+  toggleIsEdit: () => {
+
+    set((state) => ({ isEdit: !state.isEdit }))
   },
 }))

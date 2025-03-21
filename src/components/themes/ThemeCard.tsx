@@ -18,6 +18,7 @@ interface ThemeCardProps {
 }
 
 const ThemeCard = ({ cardData, onEdit }: ThemeCardProps) => {
+	// const {toggleIsEdit} = useThemeStore()
 	const { userRoles } = useUserStore()
 	return (
 		<Card className='w-full max-w-sm  flex flex-col justify-between  shadow-lg rounded-2xl p-4'>

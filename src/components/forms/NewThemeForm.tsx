@@ -66,12 +66,15 @@ export default function TiptapForm() {
 		}
 	}
 
-	const onSubmit = (data: any) => {
-		api.post('api/groups', data).then(() => {
-			toggleIsOpen()
-			fetchData(100)
-		})
-	}
+	const onSubmit = async (data: any) => {
+		try {
+			await api.post('api/groups', data); 
+			await fetchData(100); 
+			toggleIsOpen();
+		} catch (error) {
+			console.error('Ошибка при создании темы:', error);
+		}
+	};
 
 	return (
 		<Form  {...form}>
