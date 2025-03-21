@@ -4,108 +4,129 @@ import { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '../ui/select'
 
 interface CardData {
-	id: string
-	type_id: number
-	name_ru: string
-	name_la: string
-	name_uz: string
-	image: string
+  id: string
+  type_id: number
+  name_ru: string
+  name_la: string
+  name_uz: string
+  image: string
 }
+
 export default function CardFilters() {
-	const [select, setSelect] = useState<CardData[]>([])
-	const [isOpen, setIsOpen] = useState(false)
+  const [select, setSelect] = useState<CardData[]>([])
+  const [isOpen, setIsOpen] = useState(false)
 
-	// Получаем сохраненные фильтры
-	const savedLessonId = localStorage.getItem('lessonId') || ''
-	const savedGroupId = localStorage.getItem('groupId') || ''
+  // Инициализируем состояния без localStorage для чистого старта
+  const [selectedLesson, setSelectedLesson] = useState('')
+  const [inputGroup, setInputGroup] = useState('')
 
-	// Устанавливаем начальные значения
-	const [selectedLesson, setSelectedLesson] = useState(savedLessonId)
-	const [inputGroup, setInputGroup] = useState(savedGroupId)
+  const { setFilter } = useCardStore()
 
-	const { setFilter } = useCardStore()
+  // Загружаем данные и применяем сохраненные фильтры
+  useEffect(() => {
+    // Загрузка данных
+    api.get('/api/groups?type_id=100').then(res => {
+      setSelect(res.data.data)
+    })
 
-	// Загружаем фильтры при монтировании
-	useEffect(() => {
-		if (savedLessonId) setFilter(savedLessonId, 'lesson')
-		if (savedGroupId) setFilter(savedGroupId, 'group')
+    // Применение сохраненных фильтров
+    const savedLessonId = localStorage.getItem('lessonId')
+    const savedGroupId = localStorage.getItem('groupId')
+    
+    if (savedLessonId) {
+      setSelectedLesson(savedLessonId)
+      setFilter(savedLessonId, 'lesson')
+    }
+    
+    if (savedGroupId) {
+      setInputGroup(savedGroupId)
+      setFilter(savedGroupId, 'group')
+    }
+  }, [])
 
-		api.get('/api/groups?type_id=100').then(res => {
-			setSelect(res.data.data)
-		})
-	}, [])
+  const handleSelectChange = (value: string) => {
+    setSelectedLesson(value)
+    setFilter(value, 'lesson')
+    localStorage.setItem('lessonId', value)
+  }
 
-	const handleSelectChange = (value: string) => {
-		setSelectedLesson(value)
-		setFilter(value, 'lesson')
-		localStorage.setItem('lessonId', value)
-	}
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value
+    if (/^\d*$/.test(value)) {
+      setInputGroup(value)
+      setFilter(value, 'group')
+      localStorage.setItem('groupId', value)
+    }
+  }
 
-	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const value = event.target.value
-		if (/^\d*$/.test(value)) {
-			setInputGroup(value)
-			setFilter(value, 'group')
-			localStorage.setItem('groupId', value)
-		}
-	}
+  const handleClearFilters = () => {
+    // Явный сброс состояний
+    setSelectedLesson('')
+    setInputGroup('')
+    
+    // Очистка фильтров в хранилище
+    setFilter(null, null)
+    
+    // Очистка localStorage
+    localStorage.removeItem('lessonId')
+    localStorage.removeItem('groupId')
+    
+    // Закрытие селекта
+    setIsOpen(false)
+    
+    // Принудительное обновление через key
+    // Можно добавить key={Date.now()} к Input, если проблема сохранится
+  }
 
-	const handleClearFilters = () => {
-		setSelectedLesson('')
-		setInputGroup('')
-		setFilter(null, null)
-		localStorage.removeItem('lessonId')
-		localStorage.removeItem('groupId')
-		setIsOpen(false)
-	}
+  return (
+    <div className='flex items-center gap-4'>
+      <Button
+        variant='secondary'
+        disabled={!selectedLesson && !inputGroup}
+        size='lg'
+        onClick={handleClearFilters}
+      >
+        Tozalash
+      </Button>
 
-	return (
-		<div className='flex items-center gap-4'>
-			<Button
-				variant='secondary'
-				disabled={!selectedLesson && !inputGroup}
-				size='lg'
-				onClick={handleClearFilters}
-			>
-				Tozalash
-			</Button>
-			<Select
-				open={isOpen}
-				onOpenChange={setIsOpen}
-				onValueChange={handleSelectChange}
-				value={selectedLesson}
-			>
-				<SelectTrigger className='w-fit max-w-[800px]'>
-					<SelectValue placeholder='Mavzuni tanlang' />
-				</SelectTrigger>
-				<SelectContent>
-					<SelectGroup>
-						{select.map(item => (
-							<SelectItem key={item.id} value={item.id}>
-								<span dangerouslySetInnerHTML={{ __html: item.name_uz }} />
-							</SelectItem>
-						))}
-					</SelectGroup>
-				</SelectContent>
-			</Select>
+      <Select
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        onValueChange={handleSelectChange}
+        value={selectedLesson}
+      >
+        <SelectTrigger className='w-fit max-w-[800px]'>
+          <SelectValue placeholder='Mavzuni tanlang' />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {select.map(item => (
+              <SelectItem key={item.id} value={item.id}>
+                <span dangerouslySetInnerHTML={{ __html: item.name_uz }} />
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
 
-			<Input
-				border
-				type='number'
-				value={inputGroup}
-				onChange={handleInputChange}
-				placeholder='Bilet raqami'
-				className='w-48 h-8.5'
-			/>
-		</div>
-	)
+      {/* Добавляем key для принудительного обновления */}
+      <Input
+        key={`input-${inputGroup}`} // Изменяем ключ при очистке
+        type='number'
+        value={inputGroup}
+        onChange={handleInputChange}
+        placeholder='Bilet raqami'
+        className='w-48 h-8.5'
+      />
+    </div>
+  )
 }
