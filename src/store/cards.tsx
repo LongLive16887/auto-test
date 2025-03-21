@@ -21,7 +21,7 @@ interface CardData {
 	question_description_uz: string
 	description_kaa: string
 	is_reverse: boolean
-	group_id: number    
+	group_id: string    
 	order_number: number
 	lesson_id: string
 	has_video: boolean
