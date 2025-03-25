@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { useCardStore } from '@/store/cards'
 import { DialogTitle } from '@radix-ui/react-dialog'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
-import ImageUpload from '../forms/ImageUpload'
 import NewCardForm from '../forms/NewCardForm'
 
 const EditCard = () => {
@@ -18,7 +17,6 @@ const EditCard = () => {
 				<VisuallyHidden>
 					<DialogTitle>Скрытый заголовок</DialogTitle>
 				</VisuallyHidden>
-				<ImageUpload />
 				<NewCardForm />
 			</DialogContent>
 		</Dialog>
