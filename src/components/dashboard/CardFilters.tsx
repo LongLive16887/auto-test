@@ -98,7 +98,7 @@ export default function CardFilters() {
         Tozalash
       </Button>
 
-      <Select
+      <Select 
         open={isOpen}
         onOpenChange={setIsOpen}
         onValueChange={handleSelectChange}

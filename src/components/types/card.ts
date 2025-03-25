@@ -15,6 +15,7 @@ export type CardData = {
 	has_video: boolean
 	answers: Answer[]
 	media: string
+	mobile_media: string
 }
 
 type Answer = {

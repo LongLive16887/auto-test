@@ -17,19 +17,26 @@ import {
 import { cn } from '@/lib/utils'
 import { useEditCardStore } from '@/store/editCard'
 import { useUserStore } from '@/store/user'
-import { Check, Pencil, X } from 'lucide-react'
+import { Check, ImageDown, Pencil, X } from 'lucide-react'
 import { useState } from 'react'
 
 const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 	const [isImageOpen, setIsImageOpen] = useState(false)
 	const { userRoles } = useUserStore()
 	const { setId, fetchCardById } = useEditCardStore()
-	const { toggleIsOpen } = useEditCardStore()
+	const { toggleIsOpen, toggleIsImage } = useEditCardStore()
 
 	function handleEdit(id: number) {
 		setId(id)
 		fetchCardById(id)
 		toggleIsOpen()
+	}
+
+	function handleImage(id: number) {
+		setId(id)
+		// fetchCardById(id)
+		// toggleIsOpen()
+		toggleIsImage()
 	}
 
 	return (
@@ -83,6 +90,24 @@ const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 						<DialogContent className='max-w-2xl'>
 							<img
 								src={cardData.media}
+								alt='Модальное изображение'
+								className='w-full rounded-lg'
+							/>
+						</DialogContent>
+					</Dialog>
+				)}
+				{cardData.mobile_media && (
+					<Dialog open={isImageOpen} onOpenChange={setIsImageOpen}>
+						<DialogTrigger asChild>
+							<img
+								src={`https://api.skillsoft.uz/api/v1/file/download/${cardData.mobile_media}`}
+								alt={'Изображениеfefeegegr'}
+								className='rounded-lg cursor-pointer w-full h-48 object-cover'
+							/>
+						</DialogTrigger>
+						<DialogContent className='max-w-2xl'>
+							<img
+								src={`https://api.skillsoft.uz/api/v1/file/download/${cardData.mobile_media}`}
 								alt='Модальное изображение'
 								className='w-full rounded-lg'
 							/>
@@ -171,12 +196,19 @@ const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 							)}
 						</DropdownMenuContent>
 					</DropdownMenu>
+					<div className='flex items-center gap-2'>
+						{userRoles.includes('UPDATE') ? (
+							<Button onClick={() => handleEdit(cardData.id)}>
+								<Pencil />
+							</Button>
+						) : null}
 
-					{userRoles.includes('UPDATE') ? (
-						<Button onClick={() => handleEdit(cardData.id)}>
-							<Pencil />
-						</Button>
-					) : null}
+						{userRoles.includes('MEDIA') ? (
+							<Button onClick={() => handleImage(cardData.id)}>
+								<ImageDown />
+							</Button>
+						) : null}
+					</div>
 				</div>
 			</CardContent>
 		</Card>

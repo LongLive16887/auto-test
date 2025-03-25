@@ -125,6 +125,7 @@ export default function TiptapForm() {
 		api.post('api/v1/question', data).then(() => {
 			toggleIsOpen()
 			fetchData(filterId ?? undefined, filterType ?? undefined)
+		
 		})
 	}
 	const removeAnswer = (index: number) => {

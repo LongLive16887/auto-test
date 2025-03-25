@@ -1,5 +1,6 @@
 import DashboardCard from '@/components/dashboard/DashboardCard'
 import EditCardForm from '@/components/forms/EditCardForm'
+import ImageUpload from '@/components/forms/ImageUpload'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { useCardStore } from '@/store/cards'
 import { useEditCardStore } from '@/store/editCard'
@@ -12,7 +13,7 @@ import MainLayout from '../layout/MainLayout'
 
 export default function Dashboard() {
 	const { data, fetchData, hasMore, filterId, filterType } = useCardStore()
-	const { isOpen, selectedId, fetchCardById, reset, currentCard } =
+	const { isOpen, isImage, toggleIsImage, selectedId, fetchCardById, reset, currentCard } =
 		useEditCardStore()
 
 	useEffect(() => {
@@ -56,6 +57,15 @@ export default function Dashboard() {
 							<Loader2 className='animate-spin' />
 						</div>
 					)}
+				</DialogContent>
+			</Dialog>
+
+			<Dialog open={isImage} onOpenChange={toggleIsImage}>
+				<DialogContent className='sm:max-w-[1460px]'>
+					<VisuallyHidden>
+						<DialogTitle>Редактирование вопроса</DialogTitle>
+					</VisuallyHidden>
+					<ImageUpload />
 				</DialogContent>
 			</Dialog>
 		</MainLayout>
