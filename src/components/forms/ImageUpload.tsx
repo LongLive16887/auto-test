@@ -44,26 +44,31 @@ const ImageUpload = () => {
 	}
 
 	const handleUpload = async () => {
-		if (!compressedPreview) return
-
-		setImageLoading(true)
+		if (!compressedPreview) return;
+	
+		setImageLoading(true);
 		try {
-			const response = await fetch(compressedPreview)
-			const blob = await response.blob()
-			const formData = new FormData()
-			formData.append('file', blob)
+			const response = await fetch(compressedPreview);
+			const blob = await response.blob();
+	
+			const file = new File([blob], originalFile?.name || 'compressed.jpg', { type: blob.type });
+	
+			const formData = new FormData();
+			formData.append('file', file);
+	
 			const uploadResponse = await api.post('/api/v1/file/upload', formData, {
 				headers: { 'Content-Type': 'multipart/form-data' },
-			})
-			const compressedId = uploadResponse.data.data.file_id
-			putImage(compressedId)
-			toggleIsImage()
+			});
+			const compressedId = uploadResponse.data.data.file_id;
+			putImage(compressedId);
+			toggleIsImage();
 		} catch (error) {
-			console.error('Upload failed:', error)
+			console.error('Upload failed:', error);
 		} finally {
-			setImageLoading(false)
+			setImageLoading(false);
 		}
-	}
+	};
+	
 
 	return (
 		<div className='flex flex-col items-center gap-4'>

@@ -100,14 +100,14 @@ const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 					<Dialog open={isImageOpen} onOpenChange={setIsImageOpen}>
 						<DialogTrigger asChild>
 							<img
-								src={`https://api.skillsoft.uz/api/v1/file/download/${cardData.mobile_media}`}
+								src={cardData.mobile_media}
 								alt={'Изображениеfefeegegr'}
 								className='rounded-lg cursor-pointer w-full h-48 object-cover'
 							/>
 						</DialogTrigger>
 						<DialogContent className='max-w-2xl'>
 							<img
-								src={`https://api.skillsoft.uz/api/v1/file/download/${cardData.mobile_media}`}
+								src={cardData.mobile_media}
 								alt='Модальное изображение'
 								className='w-full rounded-lg'
 							/>
