@@ -1,18 +1,22 @@
 import api from '@/api/axios'
-import { useRef, useState } from 'react'
-import imageCompression from 'browser-image-compression'
+import { useCardStore } from '@/store/cards'
 import { useEditCardStore } from '@/store/editCard'
+import imageCompression from 'browser-image-compression'
+import { useRef, useState } from 'react'
 
 const ImageUpload = () => {
 	const [preview, setPreview] = useState<string | null>(null)
-	const [compressedPreview, setCompressedPreview] = useState<string | null>(null)
+	const [compressedPreview, setCompressedPreview] = useState<string | null>(
+		null
+	)
 	const fileInputRef = useRef<HTMLInputElement>(null)
 	const [quality, setQuality] = useState(0.98)
 	const [imageLoading, setImageLoading] = useState(false)
 	const [originalFile, setOriginalFile] = useState<File | null>(null)
 	const [originalSize, setOriginalSize] = useState<string | null>(null)
 	const [compressedSize, setCompressedSize] = useState<string | null>(null)
-	const {putImage, toggleIsImage} = useEditCardStore()
+	const { putImage, reset, toggleIsImage } = useEditCardStore()
+	const { fetchData, filterId, filterType } = useCardStore()
 
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0]
@@ -21,14 +25,14 @@ const ImageUpload = () => {
 		setOriginalFile(file)
 		const tempPreview = URL.createObjectURL(file)
 		setPreview(tempPreview)
-		setCompressedPreview(tempPreview) 
+		setCompressedPreview(tempPreview)
 		setOriginalSize((file.size / 1024).toFixed(2) + ' KB')
 	}
 
 	const compressImage = async (file: File, quality: number) => {
 		const options = {
 			maxSizeMB: 1,
-			maxWidthOrHeight: file.type === 'image/png' ? undefined : 1000, 
+			maxWidthOrHeight: file.type === 'image/png' ? undefined : 1000,
 			useWebWorker: true,
 			initialQuality: quality,
 		}
@@ -44,31 +48,34 @@ const ImageUpload = () => {
 	}
 
 	const handleUpload = async () => {
-		if (!compressedPreview) return;
-	
-		setImageLoading(true);
+		if (!compressedPreview) return
+
+		setImageLoading(true)
 		try {
-			const response = await fetch(compressedPreview);
-			const blob = await response.blob();
-	
-			const file = new File([blob], originalFile?.name || 'compressed.jpg', { type: blob.type });
-	
-			const formData = new FormData();
-			formData.append('file', file);
-	
+			const response = await fetch(compressedPreview)
+			const blob = await response.blob()
+
+			const file = new File([blob], originalFile?.name || 'compressed.jpg', {
+				type: blob.type,
+			})
+
+			const formData = new FormData()
+			formData.append('file', file)
+
 			const uploadResponse = await api.post('/api/v1/file/upload', formData, {
 				headers: { 'Content-Type': 'multipart/form-data' },
-			});
-			const compressedId = uploadResponse.data.data.file_id;
-			putImage(compressedId);
-			toggleIsImage();
+			})
+			const compressedId = uploadResponse.data.data.file_id
+			putImage(compressedId)
+			toggleIsImage()
+			reset()
+			fetchData(filterId ?? undefined, filterType ?? undefined)
 		} catch (error) {
-			console.error('Upload failed:', error);
+			console.error('Upload failed:', error)
 		} finally {
-			setImageLoading(false);
+			setImageLoading(false)
 		}
-	};
-	
+	}
 
 	return (
 		<div className='flex flex-col items-center gap-4'>
@@ -90,12 +97,30 @@ const ImageUpload = () => {
 				<div className='flex flex-col gap-4'>
 					<div className='flex gap-4'>
 						<div className='flex flex-col items-center'>
-							<img src={preview} alt='Original' className='w-2xl h-xl object-cover' />
-							{originalSize && <p className='text-sm text-gray-600'>Original: {originalSize}</p>}
+							<img
+								src={preview}
+								alt='Original'
+								className='w-2xl h-xl object-cover'
+							/>
+							{originalSize && (
+								<p className='text-sm text-gray-600'>
+									Original: {originalSize}
+								</p>
+							)}
 						</div>
 						<div className='flex flex-col items-center'>
-							{compressedPreview && <img src={compressedPreview} alt='Compressed' className='w-2xl h-xl object-cover' />}
-							{compressedSize && <p className='text-sm text-gray-600'>Compressed: {compressedSize}</p>}
+							{compressedPreview && (
+								<img
+									src={compressedPreview}
+									alt='Compressed'
+									className='w-2xl h-xl object-cover'
+								/>
+							)}
+							{compressedSize && (
+								<p className='text-sm text-gray-600'>
+									Compressed: {compressedSize}
+								</p>
+							)}
 						</div>
 					</div>
 				</div>
@@ -107,7 +132,7 @@ const ImageUpload = () => {
 					max='0.98'
 					step='0.01'
 					value={quality}
-					onChange={(e) => {
+					onChange={e => {
 						const newQuality = parseFloat(e.target.value)
 						setQuality(newQuality)
 						if (originalFile) compressImage(originalFile, newQuality)
