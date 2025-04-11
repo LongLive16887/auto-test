@@ -303,39 +303,51 @@ export default function EditCardForm() {
 							</FormItem>
 						)}
 					/>
-					<FormField
-						control={control}
-						name='lesson_id'
-						render={({ field }) => (
-							<FormItem className='flex items-center gap-2.5'>
-								<FormControl>
-									<Select
-										value={field.value}
-										onValueChange={value => {
-											field.onChange(value)
-										}}
-									>
-										<SelectTrigger className='w-fit max-w-[800px]'>
-											<SelectValue placeholder='Mavzuni tanlang' />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectGroup>
-												{select.map(item => (
-													<SelectItem key={item.id} value={String(item.id)}>
-														<span
-															dangerouslySetInnerHTML={{
-																__html: item.name_uz || 'Empty',
-															}}
-														/>
-													</SelectItem>
-												))}
-											</SelectGroup>
-										</SelectContent>
-									</Select>
-								</FormControl>
-							</FormItem>
-						)}
-					/>
+					<div>
+						<FormField
+							control={control}
+							name='lesson_id'
+							render={({ field }) => (
+								<FormItem className='flex items-center gap-2.5'>
+									<FormControl>
+										<div className='flex items-center gap-2.5'>
+											<Select
+												value={field.value}
+												onValueChange={value => {
+													field.onChange(value)
+												}}
+											>
+												<SelectTrigger className='w-fit max-w-[800px]'>
+													<SelectValue placeholder='Mavzuni tanlang' />
+												</SelectTrigger>
+												<SelectContent>
+													<SelectGroup>
+														{select.map(item => (
+															<SelectItem key={item.id} value={String(item.id)}>
+																<span
+																	dangerouslySetInnerHTML={{
+																		__html: item.name_uz || 'Empty',
+																	}}
+																/>
+															</SelectItem>
+														))}
+													</SelectGroup>
+												</SelectContent>
+											</Select>
+
+											<button
+												type='button'
+												onClick={() => field.onChange('')}
+												className='px-3 py-2 rounded-md text-sm bg-red-100 hover:bg-red-200 text-red-600'
+											>
+												Tozalash
+											</button>
+										</div>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+					</div>
 				</div>
 
 				<div className='flex flex-col gap-3.5'>

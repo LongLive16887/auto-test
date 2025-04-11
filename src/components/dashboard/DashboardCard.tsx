@@ -83,7 +83,7 @@ const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 						<DialogTrigger asChild>
 							<img
 								src={cardData.media}
-								alt={cardData.question_ru || 'Изображение'}
+								alt={'Изображение'}
 								className='rounded-lg cursor-pointer w-full h-48 object-cover'
 							/>
 						</DialogTrigger>
@@ -101,7 +101,7 @@ const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 						<DialogTrigger asChild>
 							<img
 								src={`https://api.skillsoft.uz/api/v1/file/download/${cardData.mobile_media}`}
-								alt={'Изображениеfefeegegr'}
+								alt={'Модальное изображение'}
 								className='rounded-lg cursor-pointer w-full h-48 object-cover'
 							/>
 						</DialogTrigger>

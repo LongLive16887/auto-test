@@ -10,16 +10,15 @@ const Input = React.forwardRef<
 	}
 >(({ className, type, border, clearable, value, onChange, ...props }, ref) => {
 	const [showPassword, setShowPassword] = React.useState(false)
-	const [internalValue, setInternalValue] = React.useState(value || '')
 
 	const isPassword = type === 'password'
-	const hasValue = !!internalValue
+	const hasValue = !!value // Используем внешний value
 	const showClearButton = clearable && hasValue && !props.disabled
-	const showPasswordToggle = isPassword && hasValue && !props.disabled 
+	const showPasswordToggle = isPassword && hasValue && !props.disabled
 	const inputType = isPassword && showPassword ? 'text' : type
 
 	const handleClear = () => {
-		setInternalValue('')
+		// Обработаем очистку через внешний onChange
 		if (onChange) {
 			onChange({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>)
 		}
@@ -31,11 +30,8 @@ const Input = React.forwardRef<
 				ref={ref}
 				type={inputType}
 				data-slot='input'
-				value={internalValue}
-				onChange={e => {
-					setInternalValue(e.target.value)
-					onChange?.(e)
-				}}
+				value={value} // Теперь напрямую используем value
+				onChange={onChange} // и onChange
 				className={cn(
 					'file:text-foreground placeholder:text-muted-foreground focus:border-primary selection:bg-primary selection:text-primary-foreground flex h-12 w-full min-w-0 rounded-sm bg-white px-3 py-2 text-base outline-none file:inline-flex file:h-7 file:border-0 file:bg-white file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:textlg',
 					'aria-invalid:border-destructive',
@@ -44,7 +40,6 @@ const Input = React.forwardRef<
 					className
 				)}
 				{...props}
-
 			/>
 
 			{showClearButton && (
