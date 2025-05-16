@@ -8,29 +8,20 @@ import { DialogTitle } from '@radix-ui/react-dialog'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { Loader2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import InfiniteScroll from 'react-infinite-scroll-component'
 import MainLayout from '../layout/MainLayout'
 
 export default function Signs() {
 	const [data, setData] = useState<any[]>([])
-	const [hasMore, setHasMore] = useState(true)
-	const [page, setPage] = useState(1)
+	const [page] = useState(1)
 
 	function fetchData() {
 		api
 			.get(`api/v1/signs?page=${page}`)
 			.then(res => {
-				const newData = res.data.data
-				if (newData.length === 0) {
-					setHasMore(false)
-				} else {
-					setData(prev => [...prev, ...newData])
-					setPage(prev => prev + 1)
-				}
+				setData(res.data.data)
 			})
 			.catch(error => {
 				console.error(error)
-				setHasMore(false)
 			})
 	}
 
@@ -59,21 +50,11 @@ export default function Signs() {
 
 	return (
 		<MainLayout>
-			<InfiniteScroll
-				dataLength={data.length}
-				next={fetchData}
-				hasMore={hasMore}
-				loader={<Loader2 className='animate-spin' />}
-				endMessage={
-					<p className='text-center text-gray-500'>Больше вопросов нет</p>
-				}
-				className='flex flex-wrap gap-3.5'
-			>
+			<div className='flex flex-wrap gap-3.5'>
 				{data.map(item => (
 					<SignCard key={item.id} cardData={item} />
 				))}
-			</InfiniteScroll>
-
+			</div>
 			<Dialog open={isOpen} onOpenChange={handleDialogChange}>
 				<DialogContent className='sm:max-w-[1460px]'>
 					<VisuallyHidden>
