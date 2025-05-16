@@ -13,6 +13,7 @@ export type SignData = {
 	order_number: number
 	lesson_id: string
 	has_video: boolean
+	sign_image: string
 	answers: Answer[]
 	media: string
 	mobile_media: string

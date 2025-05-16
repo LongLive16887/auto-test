@@ -75,36 +75,18 @@ const SignCard = ({ cardData }: { cardData: SignData }) => {
 			</CardHeader>
 
 			<CardContent className='flex flex-col gap-4'>
-				{cardData.media && (
+				{cardData.sign_image && (
 					<Dialog open={isImageOpen} onOpenChange={setIsImageOpen}>
 						<DialogTrigger asChild>
 							<img
-								src={cardData.media}
-								alt={'Изображение'}
-								className='rounded-lg cursor-pointer w-full h-48 object-cover'
-							/>
-						</DialogTrigger>
-						<DialogContent className='max-w-2xl'>
-							<img
-								src={cardData.media}
-								alt='Модальное изображение'
-								className='w-full rounded-lg'
-							/>
-						</DialogContent>
-					</Dialog>
-				)}
-				{cardData.mobile_media && (
-					<Dialog open={isImageOpen} onOpenChange={setIsImageOpen}>
-						<DialogTrigger asChild>
-							<img
-								src={`https://api.skillsoft.uz/api/v1/file/download/${cardData.mobile_media}`}
+								src={`https://api.skillsoft.uz/api/v1/file/download/${cardData.sign_image}`}
 								alt={'Модальное изображение'}
 								className='rounded-lg cursor-pointer w-full h-48 object-cover'
 							/>
 						</DialogTrigger>
 						<DialogContent className='max-w-2xl'>
 							<img
-								src={`https://api.skillsoft.uz/api/v1/file/download/${cardData.mobile_media}`}
+								src={`https://api.skillsoft.uz/api/v1/file/download/${cardData.sign_image}`}
 								alt='Модальное изображение'
 								className='w-full rounded-lg'
 							/>
