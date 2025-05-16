@@ -37,7 +37,7 @@ interface EditStore {
 	isLoading: boolean
 	filterId: string | null 
 	filterType: 'group' | 'lesson' | null
-	fetchData: (id?: string, type?: 'group' | 'lesson') => Promise<void>
+	fetchData: () => Promise<void>
 	setFilter: (id: string | null, type: 'group' | 'lesson' | null) => void
   isOpen: boolean,
   toggleIsOpen: () => void

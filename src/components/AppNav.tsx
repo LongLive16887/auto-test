@@ -4,6 +4,7 @@ import CreateTheme from './themes/CreateTheme'
 
 import CardFilters from './dashboard/CardFilters'
 import { SidebarTrigger } from './ui/sidebar'
+import CreateSign from './signs/CreateSign'
 
 const titles: Record<string, string> = {
 	'/': 'Savollar',
@@ -37,6 +38,10 @@ const AppNav = () => {
 				) : null}
 				{userRoles.includes('WRITE') && location.pathname === '/themes' ? (
 					<CreateTheme />
+				) : null}
+
+				{userRoles.includes('WRITE') && location.pathname === '/signs' ? (
+					<CreateSign />
 				) : null}
 			</div>
 		</div>
