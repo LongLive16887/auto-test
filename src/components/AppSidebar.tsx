@@ -21,12 +21,14 @@ import {
 	ChevronUp,
 	Lightbulb,
 	MessageCircleQuestion,
+	SignalIcon,
 	User2,
 } from 'lucide-react'
 
 const items = [
 	{ title: 'Savollar', url: '/', icon: MessageCircleQuestion },
 	{ title: 'Mavzular', url: '/themes', icon: Lightbulb },
+	{ title: 'Belgilar', url: '/signs', icon: SignalIcon },
 ]
 
 const AppSidebar = () => {

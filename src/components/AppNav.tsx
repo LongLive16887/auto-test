@@ -10,6 +10,7 @@ const titles: Record<string, string> = {
 	'/adverstings': 'Saytdagi Reklamalar',
 	'/themes': 'Mavzular',
 	'/adverstings/add': 'Sayt yaratish',
+	'/signs': 'Belgilar',
 }
 
 const AppNav = () => {
