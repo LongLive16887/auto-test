@@ -1,4 +1,4 @@
-import { CardData } from '@/components/types/index'
+import { SignData } from '@/components/types/index'
 import {
 	Accordion,
 	AccordionContent,
@@ -20,7 +20,7 @@ import { useUserStore } from '@/store/user'
 import { Check, ImageDown, Pencil, X } from 'lucide-react'
 import { useState } from 'react'
 
-const SignCard = ({ cardData }: { cardData: CardData }) => {
+const SignCard = ({ cardData }: { cardData: SignData }) => {
 	const [isImageOpen, setIsImageOpen] = useState(false)
 	const { userRoles } = useUserStore()
 	const { setId, fetchCardById, toggleIsOpen, toggleIsImage } = useEditSignStore()
@@ -60,13 +60,13 @@ const SignCard = ({ cardData }: { cardData: CardData }) => {
 						<div dangerouslySetInnerHTML={{ __html: cardData.sign_name_la }} />
 					</div>
 				)}
-				{cardData.question_uz && (
+				{cardData.sign_name_ru && (
 					<div>
 						<p className='text-xs font-semibold mb-1'>Uz</p>
 						<div dangerouslySetInnerHTML={{ __html: cardData.sign_name_ru }} />
 					</div>
 				)}
-				{cardData.question_ru && (
+				{cardData.sign_name_uz && (
 					<div>
 						<p className='text-xs font-semibold mb-1'>Ru</p>
 						<div dangerouslySetInnerHTML={{ __html: cardData.sign_name_uz }} />

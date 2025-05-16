@@ -48,7 +48,7 @@ export default function EditThemeForm({ themeData, onClose }: EditThemeProps) {
 		defaultValues: themeData || {},
 	})
 
-	const { fetchData, toggleIsOpen } = useSignStore()
+	const { fetchData } = useSignStore()
 	const { handleSubmit, control, setValue, reset } = form
 	const [isLoading, setIsLoading] = useState(false)
 	const [apiError] = useState('')

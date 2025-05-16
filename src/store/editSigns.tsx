@@ -9,21 +9,26 @@ interface Answer {
 	is_correct: boolean
 }
 
-interface CardData {
-	question_la: string
-	question_ru: string
-	question_uz: string
+export type CardData = {
+	id: number
+	sign_name_la: string
+	sign_name_ru: string
+	sign_name_uz: string
 	question_kaa: string
 	description_la: string
 	description_ru: string
 	description_uz: string
 	description_kaa: string
 	is_reverse: boolean
-	group_id: number
+	image: string
+	type_id: number
+	group_id: string
 	order_number: number
 	lesson_id: string
 	has_video: boolean
 	answers: Answer[]
+	media: string
+	mobile_media: string
 }
 
 interface EditStore {

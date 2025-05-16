@@ -15,7 +15,6 @@ export default function Signs() {
 	const [data, setData] = useState<any[]>([])
 	const [hasMore, setHasMore] = useState(true)
 	const [page, setPage] = useState(1)
-	const [edit, setEdit] = useState(false)
 
 	function fetchData() {
 		api
