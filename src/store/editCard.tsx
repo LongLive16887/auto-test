@@ -30,19 +30,23 @@ interface EditStore {
 	currentCard: CardData | null
 	isOpen: boolean
 	isImage: boolean
+	isAudio: boolean
 	selectedId: number | null
 	fetchCardById: (id: number) => Promise<void>
 	setId: (id?: number) => void
 	reset: () => void
 	toggleIsOpen: () => void
 	toggleIsImage: () => void
+	toggleIsAudio: () => void
 	putImage: (media: string) => void
+	putAudio: (media: string) => void
 }
 
 export const useEditCardStore = create<EditStore>()((set, get) => ({
 	currentCard: null,
 	isOpen: false,
 	isImage: false,
+	isAudio: false,
 	selectedId: null,
 
 	fetchCardById: async (id: number) => {
@@ -78,12 +82,30 @@ export const useEditCardStore = create<EditStore>()((set, get) => ({
 		})
 	},
 
+	putAudio: (audio: string) => {
+		const { selectedId } = get()
+		if (!selectedId) return
+		api.put('api/v1/question/add-audio', {
+			question_id: selectedId,
+			audio_id: audio,
+		},
+			{
+				params: {
+					questionId: selectedId,
+				},
+			})
+	},
+
 	toggleIsOpen: () => {
 		set(state => ({ isOpen: !state.isOpen }))
 	},
 
 	toggleIsImage: () => {
 		set(state => ({ isImage: !state.isImage }))
+	},
+
+	toggleIsAudio: () => {
+		set(state => ({ isAudio: !state.isAudio }))
 	},
 
 	reset: () => {

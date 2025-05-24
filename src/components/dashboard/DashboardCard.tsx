@@ -17,14 +17,15 @@ import {
 import { cn } from '@/lib/utils'
 import { useEditCardStore } from '@/store/editCard'
 import { useUserStore } from '@/store/user'
-import { Check, ImageDown, Pencil, X } from 'lucide-react'
+import { Check, FileAudio, ImageDown, Pencil, X } from 'lucide-react'
 import { useState } from 'react'
+import AudioPlayerWithDownload from '../helpers/AudioDownload'
 
 const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 	const [isImageOpen, setIsImageOpen] = useState(false)
 	const { userRoles } = useUserStore()
 	const { setId, fetchCardById } = useEditCardStore()
-	const { toggleIsOpen, toggleIsImage } = useEditCardStore()
+	const { toggleIsOpen, toggleIsImage, toggleIsAudio } = useEditCardStore()
 
 	function handleEdit(id: number) {
 		setId(id)
@@ -37,6 +38,11 @@ const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 		// fetchCardById(id)
 		// toggleIsOpen()
 		toggleIsImage()
+	}
+
+	function handleAudio(id: number) {
+		setId(id)
+		toggleIsAudio()
 	}
 
 	return (
@@ -208,8 +214,17 @@ const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 								<ImageDown />
 							</Button>
 						) : null}
+
+						{userRoles.includes('MEDIA') ? (
+							<Button onClick={() => handleAudio(cardData.id)}>
+								<FileAudio />
+							</Button>
+						) : null}
+						
 					</div>
 				</div>
+
+				<AudioPlayerWithDownload fileId={cardData.audio_id}/>
 			</CardContent>
 		</Card>
 	)

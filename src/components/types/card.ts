@@ -16,6 +16,7 @@ export type CardData = {
 	answers: Answer[]
 	media: string
 	mobile_media: string
+	audio_id: string
 }
 
 type Answer = {

@@ -1,6 +1,7 @@
 import DashboardCard from '@/components/dashboard/DashboardCard'
 import EditCardForm from '@/components/forms/EditCardForm'
 import ImageUpload from '@/components/forms/ImageUpload'
+import AudioUpload from '@/components/forms/AudioUpload'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { useCardStore } from '@/store/cards'
 import { useEditCardStore } from '@/store/editCard'
@@ -13,8 +14,7 @@ import MainLayout from '../layout/MainLayout'
 
 export default function Dashboard() {
 	const { data, fetchData, hasMore, filterId, filterType } = useCardStore()
-	const { isOpen, isImage, toggleIsImage, selectedId, fetchCardById, reset, currentCard } =
-		useEditCardStore()
+	const { isOpen, isImage, toggleIsImage, selectedId, fetchCardById, reset, currentCard, isAudio, toggleIsAudio } = useEditCardStore()
 
 	useEffect(() => {
 		fetchData(filterId ?? undefined, filterType ?? undefined)
@@ -66,6 +66,15 @@ export default function Dashboard() {
 						<DialogTitle>Редактирование вопроса</DialogTitle>
 					</VisuallyHidden>
 					<ImageUpload />
+				</DialogContent>
+			</Dialog>
+
+			<Dialog open={isAudio} onOpenChange={toggleIsAudio}>
+				<DialogContent>
+					<VisuallyHidden>
+						<DialogTitle>Редактирование вопроса</DialogTitle>
+					</VisuallyHidden>
+					<AudioUpload />
 				</DialogContent>
 			</Dialog>
 		</MainLayout>
