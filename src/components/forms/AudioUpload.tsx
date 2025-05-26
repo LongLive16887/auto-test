@@ -33,14 +33,20 @@ const UploadAudio = () => {
             const formData = new FormData()
             formData.append('file', audioFile)
 
-            const uploadResponse = await api.post('/api/v1/file/upload/audio', formData, {
+            api.post('/api/v1/file/upload/audio', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             })
-            const uploadedId = uploadResponse.data.data.file_id
-            putAudio(uploadedId)
-            toggleIsAudio()
-            reset()
-            fetchData(filterId ?? undefined, filterType ?? undefined)
+            .then((uploadResponse) => {
+                const uploadedId = uploadResponse.data.data.file_id
+                putAudio(uploadedId) 
+                useCardStore.setState({ page: 0 })
+            })
+            .then(() => {
+                toggleIsAudio()
+                reset()
+                fetchData(filterId ?? undefined, filterType ?? undefined)
+            })
+
         } catch (error) {
             console.error('Audio upload failed:', error)
         } finally {
@@ -67,8 +73,8 @@ const UploadAudio = () => {
 
             {preview && (
                 <div className='flex flex-col items-center gap-2 w-full'>
-                    <MediaThemeTailwindAudio 
-                    style={{ width: "100%" }}>
+                    <MediaThemeTailwindAudio
+                        style={{ width: "100%" }}>
                         <audio
                             slot="media"
                             src={preview ?? undefined}
