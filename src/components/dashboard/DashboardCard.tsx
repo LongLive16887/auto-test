@@ -215,7 +215,7 @@ const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 							</Button>
 						) : null}
 
-						{userRoles.includes('MEDIA') ? (
+						{userRoles.includes('UPDATE') ? (
 							<Button onClick={() => handleAudio(cardData.id)}>
 								<FileAudio />
 							</Button>
