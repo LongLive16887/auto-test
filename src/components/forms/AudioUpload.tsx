@@ -58,7 +58,7 @@ const UploadAudio = () => {
         <div className='flex flex-col items-center gap-4'>
             <input
                 type='file'
-                accept='audio/*'
+                accept='.mp3,.m4a,audio/mpeg,audio/mp4,audio/x-m4a'
                 onChange={handleFileChange}
                 ref={fileInputRef}
                 className='hidden'
@@ -70,7 +70,7 @@ const UploadAudio = () => {
             >
                 Audio tanlang
             </button>
-
+            
             {preview && (
                 <div className='flex flex-col items-center gap-2 w-full'>
                     <MediaThemeTailwindAudio
