@@ -25,20 +25,17 @@ export default function CardFilters() {
 	const [select, setSelect] = useState<CardData[]>([])
 	const [isOpen, setIsOpen] = useState(false)
 
-	// Инициализируем состояния без localStorage для чистого старта
 	const [selectedLesson, setSelectedLesson] = useState('')
 	const [inputGroup, setInputGroup] = useState('')
+	const [inputSearch, setInputSearch] = useState('')
 
-	const { setFilter } = useCardStore()
+	const { setFilter, fetchData } = useCardStore()
 
-	// Загружаем данные и применяем сохраненные фильтры
 	useEffect(() => {
-		// Загрузка данных
 		api.get('/api/groups?type_id=100').then(res => {
 			setSelect(res.data.data)
 		})
 
-		// Применение сохраненных фильтров
 		const savedLessonId = localStorage.getItem('lessonId')
 		const savedGroupId = localStorage.getItem('groupId')
 
@@ -52,7 +49,7 @@ export default function CardFilters() {
 			setFilter(savedGroupId, 'group')
 		}
 	}, [])
-  
+
 	const handleSelectChange = (value: string) => {
 		setSelectedLesson(value)
 		setFilter(value, 'lesson')
@@ -68,15 +65,28 @@ export default function CardFilters() {
 		}
 	}
 
+	const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const value = event.target.value
+		setInputSearch(value)
+
+		if (value.trim().length >= 3) {
+			setFilter(value, 'search')
+		}
+
+		if (value.trim().length === 0) {
+			setFilter(null, null)
+		}
+	}
+
 	const handleClearFilters = () => {
-    setSelectedLesson('')
-    setInputGroup('') // ⬅️ это правильно
-    setFilter(null, null)
-    localStorage.removeItem('lessonId')
-    localStorage.removeItem('groupId')
-    setIsOpen(false)
-    console.log('Filters cleared:', selectedLesson, inputGroup)
-  }
+		setSelectedLesson('')
+		setInputGroup('')
+		setFilter(null, null)
+		localStorage.removeItem('lessonId')
+		localStorage.removeItem('groupId')
+		setIsOpen(false)
+		console.log('Filters cleared:', selectedLesson, inputGroup)
+	}
 
 	return (
 		<div className='flex items-center gap-4'>
@@ -109,13 +119,21 @@ export default function CardFilters() {
 				</SelectContent>
 			</Select>
 
-			{/* Добавляем key для принудительного обновления */}
 			<Input
-        border
+				border
 				type='number'
 				value={inputGroup}
 				onChange={handleInputChange}
 				placeholder='Bilet raqami'
+				className='w-48 h-8.5'
+			/>
+
+			<Input
+				border
+				type="text"
+				value={inputSearch}
+				onChange={handleSearchChange}
+				placeholder='Qidiruv'
 				className='w-48 h-8.5'
 			/>
 		</div>

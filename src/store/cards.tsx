@@ -37,9 +37,9 @@ interface EditStore {
 	hasMore: boolean
 	isLoading: boolean
 	filterId: string | null 
-	filterType: 'group' | 'lesson' | null
-	fetchData: (id?: string, type?: 'group' | 'lesson') => Promise<void>
-	setFilter: (id: string | null, type: 'group' | 'lesson' | null) => void
+	filterType: 'group' | 'lesson' | "search" | null
+	fetchData: (id?: string, type?: 'group' | 'lesson' | "search") => Promise<void>
+	setFilter: (id: string | null, type: 'group' | 'lesson' | "search" | null) => void
   isOpen: boolean,
   toggleIsOpen: () => void
 }
@@ -54,7 +54,7 @@ export const useCardStore = create<EditStore>((set, get) => ({
   isOpen: false,
 
 
-  fetchData: async (id?: string, type?: 'group' | 'lesson') => {
+  fetchData: async (id?: string, type?: 'group' | 'lesson' | "search") => {
     const { page, data, isLoading, filterId, filterType } = get()
     if (isLoading) return
     set({ isLoading: true })
@@ -65,9 +65,13 @@ export const useCardStore = create<EditStore>((set, get) => ({
       let url = `/api/v1/question?page=${page}&size=10`
 
       if (finalId) {
-        url = finalType === 'group'
-          ? `/api/v1/question?groupId=${finalId}&page=${page}&size=10`
-          : `/api/v1/question?lessonId=${finalId}&page=${page}&size=10`
+        if(finalType === "group"){
+          url = `/api/v1/question?groupId=${finalId}&page=${page}&size=10`
+        }else if(finalType === "lesson"){
+          url = `/api/v1/question?lessonId=${finalId}&page=${page}&size=10`
+        }else if( finalType === "search"){
+          url = `/api/v1/question?name=${finalId}&page=${page}&size=10`
+        } 
       }
 
       const res = await api.get(url)
@@ -89,7 +93,7 @@ export const useCardStore = create<EditStore>((set, get) => ({
     set((state) => ({ isOpen: !state.isOpen }))
   },
 
-  setFilter: (id: string | null, type: 'group' | 'lesson' | null) => {
+  setFilter: (id: string | null, type: 'group' | 'lesson' | "search" | null) => {
     set({ filterId: id, filterType: type, data: [], page: 0, hasMore: true })
   },
 }))
