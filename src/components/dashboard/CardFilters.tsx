@@ -29,7 +29,7 @@ export default function CardFilters() {
 	const [inputGroup, setInputGroup] = useState('')
 	const [inputSearch, setInputSearch] = useState('')
 
-	const { setFilter, fetchData } = useCardStore()
+	const { setFilter } = useCardStore()
 
 	useEffect(() => {
 		api.get('/api/groups?type_id=100').then(res => {
@@ -79,6 +79,7 @@ export default function CardFilters() {
 	}
 
 	const handleClearFilters = () => {
+		setInputSearch('')
 		setSelectedLesson('')
 		setInputGroup('')
 		setFilter(null, null)
@@ -92,7 +93,7 @@ export default function CardFilters() {
 		<div className='flex items-center gap-4'>
 			<Button
 				variant='secondary'
-				disabled={!selectedLesson && !inputGroup}
+				disabled={!selectedLesson && !inputGroup && !inputSearch}
 				size='lg'
 				onClick={handleClearFilters}
 			>
