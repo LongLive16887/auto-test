@@ -7,6 +7,9 @@ interface Answer {
 	answer_uz: string
 	answer_ru: string
 	answer_kaa: string
+	answer_la_colored: string | null
+	answer_uz_colored: string | null
+	answer_ru_colored: string | null
 	is_correct: boolean
 }
 
@@ -16,19 +19,22 @@ interface CardData {
 	question_ru: string
 	question_uz: string
 	question_kaa: string
+	question_la_colored: string | null
+	question_uz_colored: string | null
+	question_ru_colored: string | null
 	question_description_la: string
 	question_description_ru: string
 	question_description_uz: string
 	description_kaa: string
 	is_reverse: boolean
-	group_id: string    
+	group_id: string
 	order_number: number
 	lesson_id: string
 	has_video: boolean
 	answers: Answer[]
 	media: string
-  mobile_media: string
-  audio_id: string
+	mobile_media: string
+	audio_id: string
 }
 
 interface EditStore {

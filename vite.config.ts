@@ -11,7 +11,6 @@ try {
   const nodeCrypto = require('node:crypto');
   if (!globalThis.crypto || typeof globalThis.crypto.getRandomValues !== 'function') {
     if (nodeCrypto?.webcrypto) {
-      // @ts-expect-error - assigning webcrypto to globalThis for runtime use
       globalThis.crypto = nodeCrypto.webcrypto;
     }
   }
