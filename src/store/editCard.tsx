@@ -2,22 +2,30 @@ import api from '@/api/axios'
 import { create } from 'zustand'
 
 interface Answer {
+	id: number
 	answer_la: string
 	answer_uz: string
 	answer_ru: string
 	answer_kaa: string
+	answer_la_colored: string | null
+	answer_uz_colored: string | null
+	answer_ru_colored: string | null
 	is_correct: boolean
 }
 
 interface CardData {
+	id: number
 	question_la: string
 	question_ru: string
 	question_uz: string
 	question_kaa: string
-	description_la: string
-	description_ru: string
-	description_uz: string
-	description_kaa: string
+	question_la_colored: string | null
+	question_ru_colored: string | null
+	question_uz_colored: string | null
+	question_description_la: string
+	question_description_ru: string
+	question_description_uz: string
+	question_description_kaa: string
 	is_reverse: boolean
 	group_id: number
 	order_number: number

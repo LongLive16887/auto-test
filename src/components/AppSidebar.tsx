@@ -19,6 +19,7 @@ import {
 import { useUserStore } from '@/store/user'
 import {
 	ChevronUp,
+	KeyRound,
 	Lightbulb,
 	MessageCircleQuestion,
 	SignalIcon,
@@ -29,6 +30,7 @@ const items = [
 	{ title: 'Savollar', url: '/', icon: MessageCircleQuestion },
 	{ title: 'Mavzular', url: '/themes', icon: Lightbulb },
 	{ title: 'Belgilar', url: '/signs', icon: SignalIcon },
+	{ title: 'Kalit so\'zlar', url: '/colored', icon: KeyRound },
 ]
 
 const AppSidebar = () => {

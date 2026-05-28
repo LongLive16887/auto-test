@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "NODE_OPTIONS=--require=./node-polyfill.cjs vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -20,6 +20,7 @@
     "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
     "@radix-ui/react-tooltip": "^1.1.8",
+    "@radix-ui/react-visually-hidden": "^1.2.4",
     "@tailwindcss/vite": "^4.0.10",
     "@tiptap/pm": "^2.11.5",
     "@tiptap/react": "^2.11.5",

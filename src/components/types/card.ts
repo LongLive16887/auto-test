@@ -7,6 +7,9 @@ export type CardData = {
 	question_description_la: string
 	question_description_ru: string
 	question_description_uz: string
+	question_la_colored: string
+	question_uz_colored: string
+	question_ru_colored: string
 	description_kaa: string
 	is_reverse: boolean
 	group_id: string
@@ -24,6 +27,9 @@ type Answer = {
 	answer_la: string
 	answer_uz: string
 	answer_ru: string
+	answer_la_colored: string
+	answer_uz_colored: string
+	answer_ru_colored: string
 	answer_kaa: string
 	is_correct: boolean
 }

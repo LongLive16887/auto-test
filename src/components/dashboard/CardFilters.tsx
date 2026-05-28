@@ -1,5 +1,4 @@
 import api from '@/api/axios'
-import { useCardStore } from '@/store/cards'
 import { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
@@ -21,7 +20,12 @@ interface CardData {
 	image: string
 }
 
-export default function CardFilters() {
+interface CardFiltersProps {
+	setFilter: (id: string | null, type: 'group' | 'lesson' | 'search' | null) => void
+	storagePrefix?: string
+}
+
+export default function CardFilters({ setFilter, storagePrefix = '' }: CardFiltersProps) {
 	const [select, setSelect] = useState<CardData[]>([])
 	const [isOpen, setIsOpen] = useState(false)
 
@@ -29,15 +33,16 @@ export default function CardFilters() {
 	const [inputGroup, setInputGroup] = useState('')
 	const [inputSearch, setInputSearch] = useState('')
 
-	const { setFilter } = useCardStore()
+	const lessonKey = `${storagePrefix}lessonId`
+	const groupKey = `${storagePrefix}groupId`
 
 	useEffect(() => {
 		api.get('/api/groups?type_id=100').then(res => {
 			setSelect(res.data.data)
 		})
 
-		const savedLessonId = localStorage.getItem('lessonId')
-		const savedGroupId = localStorage.getItem('groupId')
+		const savedLessonId = localStorage.getItem(lessonKey)
+		const savedGroupId = localStorage.getItem(groupKey)
 
 		if (savedLessonId) {
 			setSelectedLesson(savedLessonId)
@@ -53,7 +58,7 @@ export default function CardFilters() {
 	const handleSelectChange = (value: string) => {
 		setSelectedLesson(value)
 		setFilter(value, 'lesson')
-		localStorage.setItem('lessonId', value)
+		localStorage.setItem(lessonKey, value)
 	}
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +66,7 @@ export default function CardFilters() {
 		if (/^\d*$/.test(value)) {
 			setInputGroup(value)
 			setFilter(value, 'group')
-			localStorage.setItem('groupId', value)
+			localStorage.setItem(groupKey, value)
 		}
 	}
 
@@ -83,10 +88,9 @@ export default function CardFilters() {
 		setSelectedLesson('')
 		setInputGroup('')
 		setFilter(null, null)
-		localStorage.removeItem('lessonId')
-		localStorage.removeItem('groupId')
+		localStorage.removeItem(lessonKey)
+		localStorage.removeItem(groupKey)
 		setIsOpen(false)
-		console.log('Filters cleared:', selectedLesson, inputGroup)
 	}
 
 	return (

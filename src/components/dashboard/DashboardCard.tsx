@@ -21,7 +21,7 @@ import { Check, FileAudio, ImageDown, Pencil, X } from 'lucide-react'
 import { useState } from 'react'
 import AudioPlayerWithDownload from '../helpers/AudioDownload'
 
-const DashboardCard = ({ cardData }: { cardData: CardData }) => {
+const DashboardCard = ({ cardData, showColored = false }: { cardData: CardData; showColored?: boolean }) => {
 	const [isImageOpen, setIsImageOpen] = useState(false)
 	const { userRoles } = useUserStore()
 	const { setId, fetchCardById } = useEditCardStore()
@@ -63,22 +63,22 @@ const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 						)}
 					</p>
 				</div>
-				{cardData.question_la && (
+				{(showColored ? (cardData.question_la_colored || cardData.question_la) : cardData.question_la) && (
 					<div>
 						<p className='text-xs font-semibold mb-1'>La</p>
-						<div dangerouslySetInnerHTML={{ __html: cardData.question_la }} />
+						<div dangerouslySetInnerHTML={{ __html: showColored ? (cardData.question_la_colored || cardData.question_la) : cardData.question_la }} />
 					</div>
 				)}
-				{cardData.question_uz && (
+				{(showColored ? (cardData.question_uz_colored || cardData.question_uz) : cardData.question_uz) && (
 					<div>
 						<p className='text-xs font-semibold mb-1'>Uz</p>
-						<div dangerouslySetInnerHTML={{ __html: cardData.question_uz }} />
+						<div dangerouslySetInnerHTML={{ __html: showColored ? (cardData.question_uz_colored || cardData.question_uz) : cardData.question_uz }} />
 					</div>
 				)}
-				{cardData.question_ru && (
+				{(showColored ? (cardData.question_ru_colored || cardData.question_ru) : cardData.question_ru) && (
 					<div>
 						<p className='text-xs font-semibold mb-1'>Ru</p>
-						<div dangerouslySetInnerHTML={{ __html: cardData.question_ru }} />
+						<div dangerouslySetInnerHTML={{ __html: showColored ? (cardData.question_ru_colored || cardData.question_ru) : cardData.question_ru }} />
 					</div>
 				)}
 			</CardHeader>
@@ -183,15 +183,9 @@ const DashboardCard = ({ cardData }: { cardData: CardData }) => {
 												answer.is_correct && 'text-green-500'
 											)}
 										>
-											<span
-												dangerouslySetInnerHTML={{ __html: answer.answer_la }}
-											/>
-											<span
-												dangerouslySetInnerHTML={{ __html: answer.answer_uz }}
-											/>
-											<span
-												dangerouslySetInnerHTML={{ __html: answer.answer_ru }}
-											/>
+											<span dangerouslySetInnerHTML={{ __html: showColored ? (answer.answer_la_colored || answer.answer_la) : answer.answer_la }} />
+											<span dangerouslySetInnerHTML={{ __html: showColored ? (answer.answer_uz_colored || answer.answer_uz) : answer.answer_uz }} />
+											<span dangerouslySetInnerHTML={{ __html: showColored ? (answer.answer_ru_colored || answer.answer_ru) : answer.answer_ru }} />
 										</div>
 									</DropdownMenuItem>
 								))

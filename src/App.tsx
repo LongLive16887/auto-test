@@ -5,6 +5,7 @@ import LoginView from './views/auth/LoginView'
 import Dashboard from './views/Dashboard'
 import Signs from './views/Signs'
 import Themes from './views/Themes'
+import Colored from './views/Colored'
 
 function App() {
 	return (
@@ -18,6 +19,7 @@ function App() {
 					<Route path='/' element={<Dashboard />} />
 					<Route path='/themes' element={<Themes />} />
 					<Route path='/signs' element={<Signs />} />
+					<Route path='/colored' element={<Colored />} />
 				</Route>
 			</Routes>
 			<Toaster />
