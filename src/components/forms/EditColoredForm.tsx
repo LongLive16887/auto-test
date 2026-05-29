@@ -1,4 +1,5 @@
 import api from '@/api/axios'
+import { latinToCyrillic } from '@/lib/transliterate'
 import {
 	Form,
 	FormControl,
@@ -35,11 +36,46 @@ export default function EditColoredForm() {
 	const { fetchData, filterId, filterType } = useColoredStore()
 	const form = useForm<FormValues>()
 
-	const { handleSubmit, control, setValue } = form
+	const { handleSubmit, control, setValue, getValues } = form
 	const [isFormInitialized, setIsFormInitialized] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 
-	const { fields, replace } = useFieldArray({ control, name: 'answers' })
+	const syncToUzbek = (html: string, uzPath: string) => {
+		setValue(uzPath as any, latinToCyrillic(html))
+	}
+
+	const applyHighlight = (html: string, cyrText: string): string => {
+		if (!cyrText || !html.includes(cyrText)) return html
+		const escaped = cyrText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+		const alreadyWrapped = new RegExp(`data-highlight="true"[^>]*>${escaped}<`).test(html)
+		if (alreadyWrapped) return html
+		return html.replace(cyrText, `<span data-highlight="true" style="background: #C59D32; padding: 0 1px; border-radius: 5px;">${cyrText}</span>`)
+	}
+
+	const syncHighlights = (laHtml: string) => {
+		const parser = new DOMParser()
+		const laDoc = parser.parseFromString(laHtml, 'text/html')
+		const spans = laDoc.querySelectorAll('span[data-highlight="true"], span[style*="background: yellow"]')
+		if (spans.length === 0) return
+
+		const texts = Array.from(spans)
+			.map(s => s.textContent?.trim() || '')
+			.filter(Boolean)
+
+		let uzHtml = getValues('question_uz')
+		let ruHtml = getValues('question_ru')
+
+		for (const laText of texts) {
+			const cyrText = latinToCyrillic(laText)
+			uzHtml = applyHighlight(uzHtml, cyrText)
+			ruHtml = applyHighlight(ruHtml, cyrText)
+		}
+
+		setValue('question_uz', uzHtml)
+		setValue('question_ru', ruHtml)
+	}
+
+	const { fields, replace, update } = useFieldArray({ control, name: 'answers' })
 
 	useEffect(() => {
 		if (currentCard && !isFormInitialized) {
@@ -130,9 +166,13 @@ export default function EditColoredForm() {
 								<FormItem>
 									<FormLabel className='text-gray-700'>Latin</FormLabel>
 									<FormControl>
-										<CustomEditor
+										<CustomEditor highlightEnabled markOnly
 											content={field.value || ''}
-											onChange={value => setValue('question_la', value)}
+											onChange={value => {
+												setValue('question_la', value)
+												syncToUzbek(value, 'question_uz')
+											}}
+											onHighlightChange={syncHighlights}
 										/>
 									</FormControl>
 								</FormItem>
@@ -145,7 +185,7 @@ export default function EditColoredForm() {
 								<FormItem>
 									<FormLabel className='text-gray-700'>Russian</FormLabel>
 									<FormControl>
-										<CustomEditor
+										<CustomEditor highlightEnabled markOnly
 											content={field.value || ''}
 											onChange={value => setValue('question_ru', value)}
 										/>
@@ -160,7 +200,7 @@ export default function EditColoredForm() {
 								<FormItem>
 									<FormLabel className='text-gray-700'>Uzbek</FormLabel>
 									<FormControl>
-										<CustomEditor
+										<CustomEditor highlightEnabled markOnly
 											content={field.value || ''}
 											onChange={value => setValue('question_uz', value)}
 										/>
@@ -182,10 +222,13 @@ export default function EditColoredForm() {
 									<FormItem>
 										<FormLabel>Latin</FormLabel>
 										<FormControl>
-											<CustomEditor
+											<CustomEditor highlightEnabled markOnly
 												answer
 												content={field.value || ''}
-												onChange={field.onChange}
+												onChange={value => {
+													const current = getValues(`answers.${index}`)
+													update(index, { ...current, answer_la: value, answer_uz: latinToCyrillic(value) })
+												}}
 											/>
 										</FormControl>
 									</FormItem>
@@ -198,7 +241,7 @@ export default function EditColoredForm() {
 									<FormItem>
 										<FormLabel>Russian</FormLabel>
 										<FormControl>
-											<CustomEditor
+											<CustomEditor highlightEnabled markOnly
 												answer
 												content={field.value || ''}
 												onChange={field.onChange}
@@ -214,7 +257,7 @@ export default function EditColoredForm() {
 									<FormItem>
 										<FormLabel>Uzbek</FormLabel>
 										<FormControl>
-											<CustomEditor
+											<CustomEditor highlightEnabled markOnly
 												answer
 												content={field.value || ''}
 												onChange={field.onChange}

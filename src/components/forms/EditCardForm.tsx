@@ -1,4 +1,5 @@
 import api from '@/api/axios'
+import { latinToCyrillic } from '@/lib/transliterate'
 import {
 	Form,
 	FormControl,
@@ -57,7 +58,7 @@ export default function EditCardForm() {
 
 	const { handleSubmit, control, setValue } = form
 	const [isFormInitialized, setIsFormInitialized] = useState(false)
-	const [isLoading, setIsLoading] = useState(false)
+	const [isLoading] = useState(false)
 	const [apiError] = useState('')
 	const [select, setSelect] = useState<SelectData[]>([])
 
@@ -94,37 +95,8 @@ export default function EditCardForm() {
 		}
 	}, [currentCard, form, isFormInitialized, replace, select])
 
-	const handleLatinBlur = async (html: string, fieldPath: string) => {
-		if (!html.trim()) return
-
-		try {
-			setIsLoading(true)
-			const raw = JSON.stringify({
-				mod: 'lattocyr',
-				text: html,
-				ignoreHtml: true,
-			})
-
-			const response = await fetch('https://lotin.uz/api/translate', {
-				method: 'POST',
-				body: raw,
-				headers: { 'Content-Type': 'application/json' },
-			})
-
-			if (!response.ok) throw new Error('Translation failed')
-
-			const data = await response.json()
-			const targetPath = fieldPath.replace('_la', '_uz')
-			setValue(targetPath as any, data.result)
-		} catch (err) {
-			console.error('Translation error:', err)
-		} finally {
-			setIsLoading(false)
-		}
-	}
-
-	const handleAnswerBlur = (index: number) => (html: string) => {
-		handleLatinBlur(html, `answers.${index}.answer_la`)
+	const syncLatinToUzbek = (html: string, uzPath: string) => {
+		setValue(uzPath as any, latinToCyrillic(html))
 	}
 
 	const onSubmit = (data: any) => {
@@ -166,8 +138,10 @@ export default function EditCardForm() {
 									<FormControl>
 										<CustomEditor
 											content={field.value || ''}
-											onChange={value => setValue('question_la', value)}
-											onBlur={() => handleLatinBlur(field.value, 'question_la')}
+											onChange={value => {
+												setValue('question_la', value)
+												syncLatinToUzbek(value, 'question_uz')
+											}}
 										/>
 									</FormControl>
 								</FormItem>
@@ -226,12 +200,10 @@ export default function EditCardForm() {
 									<FormControl>
 										<CustomEditor
 											content={field.value || ''}
-											onChange={value =>
+											onChange={value => {
 												setValue('question_description_la', value)
-											}
-											onBlur={() =>
-												handleLatinBlur(field.value, 'question_description_la')
-											}
+												syncLatinToUzbek(value, 'question_description_uz')
+											}}
 										/>
 									</FormControl>
 								</FormItem>
@@ -398,8 +370,10 @@ export default function EditCardForm() {
 												<CustomEditor
 													answer
 													content={field.value}
-													onChange={field.onChange}
-													onBlur={() => handleAnswerBlur(index)(field.value)}
+													onChange={value => {
+														field.onChange(value)
+														syncLatinToUzbek(value, `answers.${index}.answer_uz`)
+													}}
 												/>
 											</FormControl>
 										</FormItem>
